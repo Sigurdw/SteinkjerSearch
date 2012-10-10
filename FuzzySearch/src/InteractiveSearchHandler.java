@@ -1,0 +1,71 @@
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+
+/**
+ * Created with IntelliJ IDEA.
+ * Copywrite:   Sigurd Wien
+ * User:        Sigurd
+ * Date:        29.09.12
+ * Time:        15:01
+ * To change this template use File | Settings | File Templates.
+ */
+public class InteractiveSearchHandler{
+
+    ArrayList<ActiveQuery> activeQueries = new ArrayList<ActiveQuery>();
+    private String activeQueryString = "";
+    private Index index;
+
+    public InteractiveSearchHandler(Index index){
+        activeQueries.add(index.initInteractiveSearch());
+        this.index = index;
+    }
+
+    public void addCharacter(char character){
+        System.out.println("Got: " + character);
+        ArrayList<ActiveQuery> nextActiveQueries = new ArrayList<ActiveQuery>();
+        for(ActiveQuery activeQuery : activeQueries){
+            activeQuery.addCharacter(character, nextActiveQueries);
+        }
+
+        /*System.out.println(
+                "Finished processing "
+                + activeQueries.size()
+                + " active queries. Now there are "
+                + nextActiveQueries.size() + " active queries.");*/
+
+        for(ActiveQuery nextActiveQuery : nextActiveQueries){
+            //System.out.println(nextActiveQuery);
+        }
+
+        activeQueries = nextActiveQueries;
+    }
+
+    public void handleUserInput(String queryString){
+        if(queryString.startsWith(activeQueryString)){
+            for(int i = activeQueryString.length(); i < queryString.length(); i++){
+                char queryCharacter = queryString.charAt(i);
+                addCharacter(queryCharacter);
+            }
+        }
+        else{
+            activeQueries.clear();
+            activeQueries.add(index.initInteractiveSearch());
+            for(int i = 0; i < queryString.length(); i++){
+                char queryCharacter = queryString.charAt(i);
+                addCharacter(queryCharacter);
+            }
+        }
+
+        activeQueryString = queryString;
+    }
+
+    public ArrayList<String> getSearchResults() {
+        ArrayList<String> results = new ArrayList<String>();
+        for(ActiveQuery activeQuery : activeQueries){
+            results.add(activeQuery.getLabel());
+        }
+
+        return results;
+    }
+}
