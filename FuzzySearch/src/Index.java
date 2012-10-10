@@ -28,4 +28,8 @@ public class Index {
     ActiveQuery initInteractiveSearch(){
         return new ActiveQuery(indexImplementation, 1, EditOperation.Insert);
     }
+
+    public TriePriorityTraverser initFastInteractiveSearch(){
+        return new TriePriorityTraverser(indexImplementation);
+    }
 }

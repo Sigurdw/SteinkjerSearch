@@ -1,10 +1,7 @@
 import sun.font.TrueTypeFont;
 
 import javax.transaction.TransactionRolledbackException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.PriorityQueue;
+import java.util.*;
 
 /**
  * Created with IntelliJ IDEA.
@@ -17,6 +14,7 @@ import java.util.PriorityQueue;
 public class Trie<T> implements Comparable<Trie<T>> {
     private ArrayList<T> dataList = new ArrayList<T>();
     private Map<Character, Trie<T>> children = new HashMap<Character, Trie<T>>();
+    private ArrayList<Trie<T>> rankSortedChildren = new ArrayList<Trie<T>>();
     private String label;
     private PriorityQueue<Trie<T>> suggestionCache = new PriorityQueue<Trie<T>>();
     private int termFrequency = 0;
@@ -54,11 +52,23 @@ public class Trie<T> implements Comparable<Trie<T>> {
                 addedTrie = child.addKeyDataPair(key, data, depth + 1);
                 children.put(childKey, child);
             }
+
+            rankSortedChildren.add(addedTrie);
+            //This should be changed (too expensice):
+            Collections.sort(rankSortedChildren);
         }
 
         maybeAddTrieToCache(addedTrie);
 
         return addedTrie;
+    }
+
+    public Trie<T> getOrderedChild(int index){
+        return rankSortedChildren.get(index);
+    }
+
+    public int getSize(){
+        return rankSortedChildren.size();
     }
 
     private void maybeAddTrieToCache(Trie<T> addedTrie) {

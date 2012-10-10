@@ -12,21 +12,26 @@ import java.util.ArrayList;
  */
 public class InteractiveSearchHandler{
 
-    ArrayList<ActiveQuery> activeQueries = new ArrayList<ActiveQuery>();
+    private ArrayList<ActiveQuery> activeQueries = new ArrayList<ActiveQuery>();
     private String activeQueryString = "";
     private Index index;
+    private TriePriorityTraverser query;
+    private ArrayList<String> suggestions = new ArrayList<String>();
+
 
     public InteractiveSearchHandler(Index index){
-        activeQueries.add(index.initInteractiveSearch());
+        //activeQueries.add(index.initInteractiveSearch());
         this.index = index;
+        query = index.initFastInteractiveSearch();
     }
 
-    public void addCharacter(char character){
+
+    private void addCharacter(char character){
         System.out.println("Got: " + character);
-        ArrayList<ActiveQuery> nextActiveQueries = new ArrayList<ActiveQuery>();
-        for(ActiveQuery activeQuery : activeQueries){
-            activeQuery.addCharacter(character, nextActiveQueries);
-        }
+        //ArrayList<ActiveQuery> nextActiveQueries = new ArrayList<ActiveQuery>();
+        //for(ActiveQuery activeQuery : activeQueries){
+        //    activeQuery.addCharacter(character, nextActiveQueries);
+        //}
 
         /*System.out.println(
                 "Finished processing "
@@ -34,11 +39,13 @@ public class InteractiveSearchHandler{
                 + " active queries. Now there are "
                 + nextActiveQueries.size() + " active queries.");*/
 
-        for(ActiveQuery nextActiveQuery : nextActiveQueries){
-            //System.out.println(nextActiveQuery);
-        }
+        //for(ActiveQuery nextActiveQuery : nextActiveQueries){
+        //    //System.out.println(nextActiveQuery);
+        //}
 
-        activeQueries = nextActiveQueries;
+        //activeQueries = nextActiveQueries;
+        suggestions = query.addCharacter(character, 1);
+        System.out.println(suggestions);
     }
 
     public void handleUserInput(String queryString){
@@ -61,11 +68,12 @@ public class InteractiveSearchHandler{
     }
 
     public ArrayList<String> getSearchResults() {
-        ArrayList<String> results = new ArrayList<String>();
+        /*ArrayList<String> results = new ArrayList<String>();
         for(ActiveQuery activeQuery : activeQueries){
             results.add(activeQuery.getLabel());
         }
 
-        return results;
+        return results;*/
+        return suggestions;
     }
 }
