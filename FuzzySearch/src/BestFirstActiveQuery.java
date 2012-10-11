@@ -1,3 +1,5 @@
+import com.sun.servicetag.SystemEnvironment;
+
 import java.util.ArrayList;
 import java.util.PriorityQueue;
 
@@ -50,13 +52,17 @@ public class BestFirstActiveQuery {
         return character == 0;
     }
 
-    public BestFirstActiveQuery getBestNextActiveNode(char character) {
+    public BestFirstActiveQuery getBestNextActiveNode(char inputCharacter) {
         System.out.println("Getting the best node.");
-        this.character = character;
+        if(character == 0){
+            System.out.println("Setting the char to: " + inputCharacter);
+            character = inputCharacter;
+        }
+
         Trie<Document> match = queryPosition.getChildren().get(character);
         double[] ranks = {0, 0, backlink.getRank(), 0};
         if(match != null && !matchUsed){
-            ranks[0] = match.getRank();
+            ranks[0] = match.getRank() * Math.pow(0.5, previousEdits);
             System.out.println("Got match with label: " + match.getLabel() + " and rank: " + match.getRank());
         }
 
@@ -72,7 +78,7 @@ public class BestFirstActiveQuery {
                 nextChild++;
             }
             else{
-                ranks[1] = bestNode.getRank() * 0.5;
+                ranks[1] = bestNode.getRank() * Math.pow(0.5, previousEdits + 1);
             }
         }
 
@@ -103,7 +109,12 @@ public class BestFirstActiveQuery {
                 break;
             case 3:
                 newBacklink = new Backlink(Math.max(Math.max(ranks[0], ranks[1]), ranks[2]), this);
-                nextActiveQuery = forwardLinks.poll().getActiveQuery();
+                Backlink forwardLink = forwardLinks.poll();
+                nextActiveQuery = forwardLink.getActiveQuery();
+                if(forwardLink.isShortCut()){
+                    nextActiveQuery.character = inputCharacter;
+                }
+
                 System.out.println("Traveling the a forward link: " + nextActiveQuery);
                 nextActiveQuery.setBacklink(newBacklink);
                 break;
@@ -139,9 +150,7 @@ public class BestFirstActiveQuery {
                 nextSuggestion = i;
                 break;
             }
-
-
-            suggestionList.add(suggestionDocument.toString());
+            suggestionList.add(suggestionDocument.getLabel() + ", " + getRank());
         }
 
         System.out.println("Got these:");
@@ -173,7 +182,7 @@ public class BestFirstActiveQuery {
             }
 
             if(bestNode != null){
-                bestEditNodeRank = bestNode.getRank() * 0.5;
+                bestEditNodeRank = bestNode.getRank() * Math.pow(0.5, previousEdits);
             }
 
             double bestForwardNodeRank = -1;
@@ -196,6 +205,6 @@ public class BestFirstActiveQuery {
     }
 
     public double getRank() {
-        return queryPosition.getRank() * previousEdits * 0.5;
+        return queryPosition.getRank() * Math.pow(0.5, previousEdits);
     }
 }

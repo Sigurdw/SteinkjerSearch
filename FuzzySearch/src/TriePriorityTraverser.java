@@ -26,7 +26,7 @@ public class TriePriorityTraverser {
             if(activeQuery.isExhausted()){
                 activeQuery.getSuggestions(suggestions);
                 if(previousExhaustedActiveQuery != null){
-                    previousExhaustedActiveQuery.addLink(new Backlink(activeQuery.getRank(), activeQuery));
+                    previousExhaustedActiveQuery.addLink(new Backlink(activeQuery.getRank(), activeQuery, true));
                 }
                 else{
                     System.out.println("Setting new root: " + activeQuery);

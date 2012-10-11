@@ -9,11 +9,18 @@
 public class Backlink implements Comparable<Backlink> {
     private double rank;
     private BestFirstActiveQuery activeQuery;
+    private boolean isShortcut = false;
 
     public Backlink(double rank, BestFirstActiveQuery bestFirstactiveQuery){
 
         this.rank = rank;
         this.activeQuery = bestFirstactiveQuery;
+    }
+
+    public Backlink(double rank, BestFirstActiveQuery bestFirstactiveQuery, boolean isShortcut){
+        this.rank = rank;
+        this.activeQuery = bestFirstactiveQuery;
+        this.isShortcut = isShortcut;
     }
 
     public double getRank(){
@@ -35,5 +42,9 @@ public class Backlink implements Comparable<Backlink> {
         else{
             return 0;
         }
+    }
+
+    public boolean isShortCut(){
+        return isShortcut;
     }
 }
