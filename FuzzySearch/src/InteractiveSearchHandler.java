@@ -52,6 +52,7 @@ public class InteractiveSearchHandler{
         if(queryString.startsWith(activeQueryString)){
             for(int i = activeQueryString.length(); i < queryString.length(); i++){
                 char queryCharacter = queryString.charAt(i);
+                System.out.println("adding char");
                 addCharacter(queryCharacter);
             }
         }

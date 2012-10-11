@@ -27,5 +27,6 @@ public class MainFrame extends JFrame {
         add(searchPanel);
         setTitle("Fuzzy Search");
         setVisible(true);
+        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
     }
 }

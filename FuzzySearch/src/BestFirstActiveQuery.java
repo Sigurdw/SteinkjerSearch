@@ -1,3 +1,5 @@
+import com.sun.org.apache.xerces.internal.impl.xs.SubstitutionGroupHandler;
+
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.PriorityQueue;
@@ -34,7 +36,7 @@ public class BestFirstActiveQuery {
     }
 
     public BestFirstActiveQuery(Trie<Document> rootNode){
-        this(rootNode, 0, EditOperation.Insert, new Backlink(0, null));
+        this(rootNode, 0, EditOperation.Insert, new Backlink(-1, null));
     }
 
     public String toString(){
@@ -50,11 +52,13 @@ public class BestFirstActiveQuery {
     }
 
     public BestFirstActiveQuery getBestNextActiveNode(char character) {
+        System.out.println("Getting the best node.");
         this.character = character;
         Trie<Document> match = queryPosition.getChildren().get(character);
         double[] ranks = {0, 0, backlink.getRank()};
         if(match != null){
             ranks[0] = match.getRank();
+            System.out.println("Got match with label: " + match.getLabel() + " and rank: " + match.getRank());
         }
 
         Trie<Document> bestNode = null;
@@ -63,14 +67,17 @@ public class BestFirstActiveQuery {
         }
 
         if(bestNode != null){
+            System.out.println("Got best with label: " + bestNode.getLabel() + " and rank: " + bestNode.getRank());
             if(bestNode == match){
-                ranks[2] = -1;
+                ranks[1] = -1;
                 nextChild++;
             }
             else{
-                ranks[2] = bestNode.getRank() * 0.5;
+                ranks[1] = bestNode.getRank() * 0.5;
             }
         }
+
+        ranks[2] = backlink.getRank();
 
         BestFirstActiveQuery nextActiveQuery = null;
         Backlink newBacklink;
@@ -83,6 +90,7 @@ public class BestFirstActiveQuery {
             case 1:
                 newBacklink = new Backlink(Math.max(ranks[0], ranks[2]), this);
                 nextActiveQuery = new BestFirstActiveQuery(bestNode, previousEdits + 1, EditOperation.Substitution, newBacklink);
+                nextChild++;
                 break;
             case 2:
                 newBacklink = new Backlink(ranks[1], this);
@@ -111,5 +119,13 @@ public class BestFirstActiveQuery {
     public void getSuggestions(ArrayList<String> suggestionList){
         //Testcode
         suggestionList.add(toString());
+    }
+
+    public BestFirstActiveQuery travelTheBacklink() {
+        System.out.println("Traveling the backlink.");
+        BestFirstActiveQuery backnode = backlink.getActiveQuery();
+        //todo get the actual next rank:
+        backnode.addLink(new Backlink(queryPosition.getRank() / 10, this));
+        return backnode;
     }
 }

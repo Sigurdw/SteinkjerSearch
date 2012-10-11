@@ -19,6 +19,8 @@ public class Trie<T> implements Comparable<Trie<T>> {
     private PriorityQueue<Trie<T>> suggestionCache = new PriorityQueue<Trie<T>>();
     private int termFrequency = 0;
 
+    private double rank;
+
     public Trie(){
         this.label = "";
     }
@@ -39,21 +41,25 @@ public class Trie<T> implements Comparable<Trie<T>> {
                 dataList.add(data);
             }
 
+            rank = Math.max((double)termFrequency / (double)dataList.size(), rank);
             termFrequency++;
             addedTrie = this;
         }
         else{
             char childKey = key.charAt(depth);
+            Trie<T> child;
             if(children.containsKey(childKey)){
-                addedTrie = children.get(childKey).addKeyDataPair(key, data, depth + 1);
+                child = children.get(childKey);
+                addedTrie = child.addKeyDataPair(key, data, depth + 1);
             }
             else{
-                Trie<T> child = new Trie<T>(label + childKey);
+                child = new Trie<T>(label + childKey);
                 addedTrie = child.addKeyDataPair(key, data, depth + 1);
                 children.put(childKey, child);
+                rankSortedChildren.add(child);
             }
 
-            rankSortedChildren.add(addedTrie);
+            rank = Math.max(child.getRank(), rank);
             //This should be changed (too expensice):
             Collections.sort(rankSortedChildren);
         }
@@ -64,6 +70,9 @@ public class Trie<T> implements Comparable<Trie<T>> {
     }
 
     public Trie<T> getOrderedChild(int index){
+        System.out.println("List of ranks:");
+        System.out.println(rankSortedChildren);
+        System.out.println();
         return rankSortedChildren.get(index);
     }
 
@@ -140,7 +149,7 @@ public class Trie<T> implements Comparable<Trie<T>> {
     }
 
     public double getRank(){
-        return (double)termFrequency / (double)dataList.size();
+        return rank;
     }
 
     public int getNumberOfEntries(){
@@ -167,5 +176,9 @@ public class Trie<T> implements Comparable<Trie<T>> {
 
     public String getLabel() {
         return label;
+    }
+
+    public String toString(){
+        return label + ", " + rank;
     }
 }

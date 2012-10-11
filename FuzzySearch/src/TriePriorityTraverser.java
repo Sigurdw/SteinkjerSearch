@@ -10,7 +10,7 @@ import java.util.ArrayList;
  */
 public class TriePriorityTraverser {
     private ArrayList<BestFirstActiveQuery> activeQueries = new ArrayList<BestFirstActiveQuery>();
-    private final int NumberOfRequiredSuggestions = 4;
+    private final int NumberOfRequiredSuggestions = 2;
 
     public TriePriorityTraverser(Trie<Document> root){
         BestFirstActiveQuery rootActiveNode = new BestFirstActiveQuery(root);
@@ -21,6 +21,7 @@ public class TriePriorityTraverser {
         ArrayList<BestFirstActiveQuery> nextActiveQueries = new ArrayList<BestFirstActiveQuery>();
         ArrayList<String> suggestions = new ArrayList<String>(numberOfRequiredSuggestions);
         for(BestFirstActiveQuery currentBestActiveQuery : activeQueries){
+            System.out.println("iteration on " + character + " " + currentBestActiveQuery);
             boolean hasFinished = handleActiveQuery(
                     currentBestActiveQuery,
                     character,
@@ -32,6 +33,8 @@ public class TriePriorityTraverser {
             }
         }
 
+        activeQueries = nextActiveQueries;
+
         return suggestions;
     }
 
@@ -41,11 +44,18 @@ public class TriePriorityTraverser {
             ArrayList<BestFirstActiveQuery> nextActiveQueries,
             ArrayList<String> suggestions)
     {
+        activeQuery = activeQuery.getBestNextActiveNode(character);
+
         while(activeQuery != null){
+            System.out.println("inner iteration on " + character);
             if(activeQuery.isExhausted()){
                 activeQuery.getSuggestions(suggestions);
+                nextActiveQueries.add(activeQuery);
                 if(suggestions.size() >= NumberOfRequiredSuggestions){
                     break;
+                }
+                else{
+                    activeQuery = activeQuery.travelTheBacklink();
                 }
             }
             else{
