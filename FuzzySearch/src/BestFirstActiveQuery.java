@@ -1,7 +1,4 @@
-import com.sun.org.apache.xerces.internal.impl.xs.SubstitutionGroupHandler;
-
 import java.util.ArrayList;
-import java.util.Map;
 import java.util.PriorityQueue;
 
 /**
@@ -19,6 +16,8 @@ public class BestFirstActiveQuery {
     private EditOperation lastEditOperation;
     private int nextChild = 0;
     private Backlink backlink;
+    private boolean matchUsed = false;
+    private int nextSuggestion = 0;
 
     private PriorityQueue<Backlink> forwardLinks = new PriorityQueue<Backlink>();
 
@@ -55,8 +54,8 @@ public class BestFirstActiveQuery {
         System.out.println("Getting the best node.");
         this.character = character;
         Trie<Document> match = queryPosition.getChildren().get(character);
-        double[] ranks = {0, 0, backlink.getRank()};
-        if(match != null){
+        double[] ranks = {0, 0, backlink.getRank(), 0};
+        if(match != null && !matchUsed){
             ranks[0] = match.getRank();
             System.out.println("Got match with label: " + match.getLabel() + " and rank: " + match.getRank());
         }
@@ -77,28 +76,44 @@ public class BestFirstActiveQuery {
             }
         }
 
-        ranks[2] = backlink.getRank();
+        Backlink bestForwardLink = forwardLinks.peek();
+        if(bestForwardLink != null){
+            ranks[3] = bestForwardLink.getRank();
+            System.out.println("Got best forward link with label: " + bestForwardLink.getActiveQuery().getLabel() + " and rank: " + bestForwardLink.getRank());
+        }
 
         BestFirstActiveQuery nextActiveQuery = null;
         Backlink newBacklink;
 
         switch (argMax(ranks)){
             case 0:
-                newBacklink = new Backlink(Math.max(ranks[1], ranks[2]), this);
+                matchUsed = true;
+                newBacklink = new Backlink(Math.max(Math.max(ranks[1], ranks[2]), ranks[3]), this);
                 nextActiveQuery = new BestFirstActiveQuery(match, previousEdits, EditOperation.Insert, newBacklink);
                 break;
             case 1:
-                newBacklink = new Backlink(Math.max(ranks[0], ranks[2]), this);
+                newBacklink = new Backlink(Math.max(Math.max(ranks[0], ranks[2]), ranks[3]), this);
                 nextActiveQuery = new BestFirstActiveQuery(bestNode, previousEdits + 1, EditOperation.Substitution, newBacklink);
                 nextChild++;
                 break;
             case 2:
-                newBacklink = new Backlink(ranks[1], this);
+                newBacklink = new Backlink(Math.max(ranks[1], ranks[3]), this);
                 nextActiveQuery = backlink.getActiveQuery();
                 nextActiveQuery.addLink(newBacklink);
+                break;
+            case 3:
+                newBacklink = new Backlink(Math.max(Math.max(ranks[0], ranks[1]), ranks[2]), this);
+                nextActiveQuery = forwardLinks.poll().getActiveQuery();
+                System.out.println("Traveling the a forward link: " + nextActiveQuery);
+                nextActiveQuery.setBacklink(newBacklink);
+                break;
         }
 
         return nextActiveQuery;
+    }
+
+    private void setBacklink(Backlink newBacklink) {
+        backlink = newBacklink;
     }
 
     private int argMax(double[] list){
@@ -112,20 +127,75 @@ public class BestFirstActiveQuery {
         return maxIndex;
     }
 
-    private void addLink(Backlink backlink){
+    public void addLink(Backlink backlink){
         forwardLinks.add(backlink);
     }
 
     public void getSuggestions(ArrayList<String> suggestionList){
-        //Testcode
-        suggestionList.add(toString());
+        for(int i = nextSuggestion; i < queryPosition.getSize(); i++){
+            Trie<Document> suggestionDocument = queryPosition.getOrderedChild(i);
+            if(backlink.getRank() > suggestionDocument.getRank()){
+                System.out.println("Done finding suggestions here.");
+                nextSuggestion = i;
+                break;
+            }
+
+
+            suggestionList.add(suggestionDocument.toString());
+        }
+
+        System.out.println("Got these:");
+        System.out.println(suggestionList);
     }
 
     public BestFirstActiveQuery travelTheBacklink() {
         System.out.println("Traveling the backlink.");
         BestFirstActiveQuery backnode = backlink.getActiveQuery();
         //todo get the actual next rank:
-        backnode.addLink(new Backlink(queryPosition.getRank() / 10, this));
+        backnode.addLink(new Backlink(getNextRank(), this));
         return backnode;
+    }
+
+    private double getNextRank(){
+        if(!isExhausted()){
+            double bestEditNodeRank = -1;
+            Trie<Document> bestNode = null;
+            if(nextChild < queryPosition.getSize()){
+                bestNode = queryPosition.getOrderedChild(nextChild);
+            }
+
+            if(bestNode != null && bestNode == queryPosition.getChildren().get(character)){
+                bestNode = null;
+                nextChild++;
+                if(nextChild < queryPosition.getSize()){
+                    bestNode = queryPosition.getOrderedChild(nextChild);
+                }
+            }
+
+            if(bestNode != null){
+                bestEditNodeRank = bestNode.getRank() * 0.5;
+            }
+
+            double bestForwardNodeRank = -1;
+            Backlink bestForwardLink = forwardLinks.peek();
+            if(bestForwardLink != null){
+                bestForwardNodeRank = bestForwardLink.getRank();
+            }
+
+            return Math.max(bestEditNodeRank, bestForwardNodeRank);
+        }
+        else{
+            if(nextSuggestion < queryPosition.getSize()){
+                return queryPosition.getOrderedChild(nextSuggestion).getRank();
+            }
+            else{
+                return -1;
+            }
+        }
+
+    }
+
+    public double getRank() {
+        return queryPosition.getRank() * previousEdits * 0.5;
     }
 }
