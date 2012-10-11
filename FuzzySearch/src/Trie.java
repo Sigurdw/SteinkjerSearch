@@ -3,14 +3,6 @@ import sun.font.TrueTypeFont;
 import javax.transaction.TransactionRolledbackException;
 import java.util.*;
 
-/**
- * Created with IntelliJ IDEA.
- * Copywrite:   Sigurd Wien
- * User:        Sigurd
- * Date:        23.09.12
- * Time:        20:18
- * To change this template use File | Settings | File Templates.
- */
 public class Trie<T> implements Comparable<Trie<T>> {
     private ArrayList<T> dataList = new ArrayList<T>();
     private Map<Character, Trie<T>> children = new HashMap<Character, Trie<T>>();
@@ -41,8 +33,9 @@ public class Trie<T> implements Comparable<Trie<T>> {
                 dataList.add(data);
             }
 
-            rank = Math.max((double)termFrequency / (double)dataList.size(), rank);
             termFrequency++;
+            rank = Math.max((double)termFrequency / (double)dataList.size(), rank);
+
             addedTrie = this;
         }
         else{

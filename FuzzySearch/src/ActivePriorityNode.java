@@ -1,5 +1,3 @@
-import com.sun.servicetag.SystemEnvironment;
-
 import java.util.ArrayList;
 import java.util.PriorityQueue;
 
@@ -11,7 +9,7 @@ import java.util.PriorityQueue;
  * Time:        12:31
  * To change this template use File | Settings | File Templates.
  */
-public class BestFirstActiveQuery {
+public class ActivePriorityNode {
     private Trie<Document> queryPosition;
     private int previousEdits;
     private char character = 0;
@@ -23,12 +21,12 @@ public class BestFirstActiveQuery {
 
     private PriorityQueue<Backlink> forwardLinks = new PriorityQueue<Backlink>();
 
-    private BestFirstActiveQuery(
+    private ActivePriorityNode(
             Trie<Document> queryPosition,
             int previousEdits,
             EditOperation lastEditOperation,
             Backlink backlink
-            )
+    )
     {
         this.queryPosition = queryPosition;
         this.previousEdits = previousEdits;
@@ -36,7 +34,7 @@ public class BestFirstActiveQuery {
         this.backlink = backlink;
     }
 
-    public BestFirstActiveQuery(Trie<Document> rootNode){
+    public ActivePriorityNode(Trie<Document> rootNode){
         this(rootNode, 0, EditOperation.Insert, new Backlink(-1, null));
     }
 
@@ -52,7 +50,7 @@ public class BestFirstActiveQuery {
         return character == 0;
     }
 
-    public BestFirstActiveQuery getBestNextActiveNode(char inputCharacter) {
+    public ActivePriorityNode getBestNextActiveNode(char inputCharacter) {
         System.out.println("Getting the best node.");
         if(character == 0){
             System.out.println("Setting the char to: " + inputCharacter);
@@ -85,42 +83,42 @@ public class BestFirstActiveQuery {
         Backlink bestForwardLink = forwardLinks.peek();
         if(bestForwardLink != null){
             ranks[3] = bestForwardLink.getRank();
-            System.out.println("Got best forward link with label: " + bestForwardLink.getActiveQuery().getLabel() + " and rank: " + bestForwardLink.getRank());
+            System.out.println("Got best forward link with label: " + bestForwardLink.getActivePriorityNode().getLabel() + " and rank: " + bestForwardLink.getRank());
         }
 
-        BestFirstActiveQuery nextActiveQuery = null;
+        ActivePriorityNode nextActivePriorityNode = null;
         Backlink newBacklink;
 
         switch (argMax(ranks)){
             case 0:
                 matchUsed = true;
                 newBacklink = new Backlink(Math.max(Math.max(ranks[1], ranks[2]), ranks[3]), this);
-                nextActiveQuery = new BestFirstActiveQuery(match, previousEdits, EditOperation.Insert, newBacklink);
+                nextActivePriorityNode = new ActivePriorityNode(match, previousEdits, EditOperation.Insert, newBacklink);
                 break;
             case 1:
                 newBacklink = new Backlink(Math.max(Math.max(ranks[0], ranks[2]), ranks[3]), this);
-                nextActiveQuery = new BestFirstActiveQuery(bestNode, previousEdits + 1, EditOperation.Substitution, newBacklink);
+                nextActivePriorityNode = new ActivePriorityNode(bestNode, previousEdits + 1, EditOperation.Substitution, newBacklink);
                 nextChild++;
                 break;
             case 2:
                 newBacklink = new Backlink(Math.max(ranks[1], ranks[3]), this);
-                nextActiveQuery = backlink.getActiveQuery();
-                nextActiveQuery.addLink(newBacklink);
+                nextActivePriorityNode = backlink.getActivePriorityNode();
+                nextActivePriorityNode.addLink(newBacklink);
                 break;
             case 3:
                 newBacklink = new Backlink(Math.max(Math.max(ranks[0], ranks[1]), ranks[2]), this);
                 Backlink forwardLink = forwardLinks.poll();
-                nextActiveQuery = forwardLink.getActiveQuery();
+                nextActivePriorityNode = forwardLink.getActivePriorityNode();
                 if(forwardLink.isShortCut()){
-                    nextActiveQuery.character = inputCharacter;
+                    nextActivePriorityNode.character = inputCharacter;
                 }
 
-                System.out.println("Traveling the a forward link: " + nextActiveQuery);
-                nextActiveQuery.setBacklink(newBacklink);
+                System.out.println("Traveling the a forward link: " + nextActivePriorityNode);
+                nextActivePriorityNode.setBacklink(newBacklink);
                 break;
         }
 
-        return nextActiveQuery;
+        return nextActivePriorityNode;
     }
 
     private void setBacklink(Backlink newBacklink) {
@@ -157,9 +155,9 @@ public class BestFirstActiveQuery {
         System.out.println(suggestionList);
     }
 
-    public BestFirstActiveQuery travelTheBacklink() {
+    public ActivePriorityNode travelTheBacklink() {
         System.out.println("Traveling the backlink.");
-        BestFirstActiveQuery backnode = backlink.getActiveQuery();
+        ActivePriorityNode backnode = backlink.getActivePriorityNode();
         //todo get the actual next rank:
         backnode.addLink(new Backlink(getNextRank(), this));
         return backnode;

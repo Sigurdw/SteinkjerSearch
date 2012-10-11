@@ -8,18 +8,18 @@
  */
 public class Backlink implements Comparable<Backlink> {
     private double rank;
-    private BestFirstActiveQuery activeQuery;
+    private ActivePriorityNode activePriorityNode;
     private boolean isShortcut = false;
 
-    public Backlink(double rank, BestFirstActiveQuery bestFirstactiveQuery){
+    public Backlink(double rank, ActivePriorityNode bestFirstactivePriorityNode){
 
         this.rank = rank;
-        this.activeQuery = bestFirstactiveQuery;
+        this.activePriorityNode = bestFirstactivePriorityNode;
     }
 
-    public Backlink(double rank, BestFirstActiveQuery bestFirstactiveQuery, boolean isShortcut){
+    public Backlink(double rank, ActivePriorityNode bestFirstactivePriorityNode, boolean isShortcut){
         this.rank = rank;
-        this.activeQuery = bestFirstactiveQuery;
+        this.activePriorityNode = bestFirstactivePriorityNode;
         this.isShortcut = isShortcut;
     }
 
@@ -27,8 +27,8 @@ public class Backlink implements Comparable<Backlink> {
         return rank;
     }
 
-    public BestFirstActiveQuery getActiveQuery() {
-        return activeQuery;
+    public ActivePriorityNode getActivePriorityNode() {
+        return activePriorityNode;
     }
 
     public int compareTo(Backlink backlink){

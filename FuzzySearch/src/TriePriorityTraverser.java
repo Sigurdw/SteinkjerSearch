@@ -9,40 +9,40 @@ import java.util.ArrayList;
  * To change this template use File | Settings | File Templates.
  */
 public class TriePriorityTraverser {
-    private BestFirstActiveQuery rootActiveNode;
+    private ActivePriorityNode rootActiveNode;
     private final int NumberOfRequiredSuggestions = 4;
 
     public TriePriorityTraverser(Trie<Document> root){
-        rootActiveNode = new BestFirstActiveQuery(root);
+        rootActiveNode = new ActivePriorityNode(root);
     }
 
     public ArrayList<String> addCharacter(char character, int numberOfRequiredSuggestions){
         ArrayList<String> suggestions = new ArrayList<String>(numberOfRequiredSuggestions);
-        BestFirstActiveQuery activeQuery = rootActiveNode.getBestNextActiveNode(character);
-        BestFirstActiveQuery previousExhaustedActiveQuery = null;
+        ActivePriorityNode activePriorityNode = rootActiveNode.getBestNextActiveNode(character);
+        ActivePriorityNode previousExhaustedActivePriorityNode = null;
 
-        while(activeQuery != null){
+        while(activePriorityNode != null){
             System.out.println("inner iteration on " + character);
-            if(activeQuery.isExhausted()){
-                activeQuery.getSuggestions(suggestions);
-                if(previousExhaustedActiveQuery != null){
-                    previousExhaustedActiveQuery.addLink(new Backlink(activeQuery.getRank(), activeQuery, true));
+            if(activePriorityNode.isExhausted()){
+                activePriorityNode.getSuggestions(suggestions);
+                if(previousExhaustedActivePriorityNode != null){
+                    previousExhaustedActivePriorityNode.addLink(new Backlink(activePriorityNode.getRank(), activePriorityNode, true));
                 }
                 else{
-                    System.out.println("Setting new root: " + activeQuery);
-                    rootActiveNode = activeQuery;
+                    System.out.println("Setting new root: " + activePriorityNode);
+                    rootActiveNode = activePriorityNode;
                 }
 
-                previousExhaustedActiveQuery = activeQuery;
+                previousExhaustedActivePriorityNode = activePriorityNode;
                 if(suggestions.size() >= NumberOfRequiredSuggestions){
                     break;
                 }
                 else{
-                    activeQuery = activeQuery.travelTheBacklink();
+                    activePriorityNode = activePriorityNode.travelTheBacklink();
                 }
             }
             else{
-                activeQuery = activeQuery.getBestNextActiveNode(character);
+                activePriorityNode = activePriorityNode.getBestNextActiveNode(character);
             }
         }
 
