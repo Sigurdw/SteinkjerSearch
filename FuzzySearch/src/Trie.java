@@ -63,10 +63,11 @@ public class Trie<T> implements Comparable<Trie<T>> {
     }
 
     public Trie<T> getOrderedChild(int index){
-        System.out.println("List of ranks:");
-        System.out.println(rankSortedChildren);
-        System.out.println();
         return rankSortedChildren.get(index);
+    }
+
+    public void printOrderedChildren(){
+        System.out.println("List of ranks: " + rankSortedChildren);
     }
 
     public int getSize(){

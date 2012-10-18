@@ -12,7 +12,7 @@ public class ActiveQuery {
     Trie<Document> queryPosition;
     int allowedEdits;
     EditOperation lastEditOperation;
-    Backlink backlink;
+    Link backlink;
 
     public ActiveQuery(
             Trie<Document> queryPosition,

@@ -29,7 +29,7 @@ public class Index {
         return new ActiveQuery(indexImplementation, 1, EditOperation.Insert);
     }
 
-    public TriePriorityTraverser initFastInteractiveSearch(){
-        return new TriePriorityTraverser(indexImplementation);
+    public TriePriorityTraverser initFastInteractiveSearch(QueryString queryString){
+        return new TriePriorityTraverser(indexImplementation, queryString);
     }
 }

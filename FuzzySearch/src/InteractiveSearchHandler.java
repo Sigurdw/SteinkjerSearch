@@ -17,16 +17,17 @@ public class InteractiveSearchHandler{
     private Index index;
     private TriePriorityTraverser query;
     private ArrayList<String> suggestions = new ArrayList<String>();
+    private QueryString queryString = new QueryString();
 
 
     public InteractiveSearchHandler(Index index){
         //activeQueries.add(index.initInteractiveSearch());
         this.index = index;
-        query = index.initFastInteractiveSearch();
+        query = index.initFastInteractiveSearch(queryString);
     }
 
 
-    private void addCharacter(char character){
+    private void addCharacter(String queryStr, char character){
         System.out.println("Got: " + character);
         //ArrayList<ActiveQuery> nextActiveQueries = new ArrayList<ActiveQuery>();
         //for(ActiveQuery activeQuery : activeQueries){
@@ -44,6 +45,7 @@ public class InteractiveSearchHandler{
         //}
 
         //activeQueries = nextActiveQueries;
+        queryString.SetQueryString(queryStr);
         suggestions = query.addCharacter(character, 1);
         System.out.println(suggestions);
     }
@@ -53,7 +55,7 @@ public class InteractiveSearchHandler{
             for(int i = activeQueryString.length(); i < queryString.length(); i++){
                 char queryCharacter = queryString.charAt(i);
                 System.out.println("adding char");
-                addCharacter(queryCharacter);
+                addCharacter(queryString, queryCharacter);
             }
         }
         else{
@@ -61,7 +63,7 @@ public class InteractiveSearchHandler{
             activeQueries.add(index.initInteractiveSearch());
             for(int i = 0; i < queryString.length(); i++){
                 char queryCharacter = queryString.charAt(i);
-                addCharacter(queryCharacter);
+                addCharacter(queryString, queryCharacter);
             }
         }
 

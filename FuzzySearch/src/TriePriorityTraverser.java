@@ -11,14 +11,16 @@ import java.util.ArrayList;
 public class TriePriorityTraverser {
     private ActivePriorityNode rootActiveNode;
     private final int NumberOfRequiredSuggestions = 4;
+    private final QueryString queryString;
 
-    public TriePriorityTraverser(Trie<Document> root){
-        rootActiveNode = new ActivePriorityNode(root);
+    public TriePriorityTraverser(Trie<Document> root, QueryString queryString){
+        rootActiveNode = new ActivePriorityNode(root, queryString);
+        this.queryString = queryString;
     }
 
     public ArrayList<String> addCharacter(char character, int numberOfRequiredSuggestions){
         ArrayList<String> suggestions = new ArrayList<String>(numberOfRequiredSuggestions);
-        ActivePriorityNode activePriorityNode = rootActiveNode.getBestNextActiveNode(character);
+        ActivePriorityNode activePriorityNode = rootActiveNode.getBestNextActiveNode();
         ActivePriorityNode previousExhaustedActivePriorityNode = null;
 
         while(activePriorityNode != null){
@@ -26,7 +28,8 @@ public class TriePriorityTraverser {
             if(activePriorityNode.isExhausted()){
                 activePriorityNode.getSuggestions(suggestions);
                 if(previousExhaustedActivePriorityNode != null){
-                    previousExhaustedActivePriorityNode.addLink(new Backlink(activePriorityNode.getRank(), activePriorityNode, true));
+                    System.out.println("Adding shortcut link.");
+                    previousExhaustedActivePriorityNode.addLink(new Link(activePriorityNode.getRank(), activePriorityNode, true));
                 }
                 else{
                     System.out.println("Setting new root: " + activePriorityNode);
@@ -42,7 +45,7 @@ public class TriePriorityTraverser {
                 }
             }
             else{
-                activePriorityNode = activePriorityNode.getBestNextActiveNode(character);
+                activePriorityNode = activePriorityNode.getBestNextActiveNode();
             }
         }
 
