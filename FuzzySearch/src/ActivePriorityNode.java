@@ -17,6 +17,7 @@ public class ActivePriorityNode {
     private int nextChild = 0;
     private Link backlink;
     private boolean matchUsed = false;
+    private boolean selfSuggestionUsed = false;
     private int nextSuggestion = 0;
     private QueryString queryString;
 
@@ -163,7 +164,13 @@ public class ActivePriorityNode {
     }
 
     public void getSuggestions(ArrayList<String> suggestionList){
+        if(queryPosition.getData().size() > 0 && !selfSuggestionUsed){
+            suggestionList.add(queryPosition.getLabel() + ", " + getDiscountRank(queryPosition, previousEdits));
+            selfSuggestionUsed = true;
+        }
+
         int numberOfUsedSuggestions = 0;
+        System.out.println("Getting suggestions. Backlink: " + backlink.getRank() + ", next = " + nextSuggestion);
         for(int i = nextSuggestion; i < queryPosition.getSize(); i++){
             Trie<Document> suggestionDocument = queryPosition.getOrderedChild(i);
             if(backlink.getRank() > getDiscountRank(suggestionDocument, previousEdits)){
