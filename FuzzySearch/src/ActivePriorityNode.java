@@ -125,8 +125,14 @@ public class ActivePriorityNode {
                 Link forwardLink = forwardLinks.poll();
                 nextActivePriorityNode = forwardLink.getActivePriorityNode();
 
-                System.out.println("Traveling the a forward link: " + nextActivePriorityNode);
-                nextActivePriorityNode.setBacklink(newBacklink);
+                System.out.println("Traveling the forward link: " + nextActivePriorityNode);
+                if(forwardLink.isShortCut()){
+                    nextActivePriorityNode.addLink(newBacklink);
+                }
+                else{
+                    nextActivePriorityNode.setBacklink(newBacklink);
+                }
+
                 break;
         }
 
