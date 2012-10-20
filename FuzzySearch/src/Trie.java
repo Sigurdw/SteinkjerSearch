@@ -54,9 +54,9 @@ public class Trie<T> implements Comparable<Trie<T>> {
                 rankSortedChildren.add(child);
             }
 
-            rank = Math.max(child.getRank(), rank);
             //This should be changed (too expensice):
             Collections.sort(rankSortedChildren);
+            rank = rankSortedChildren.get(0).getRank();
         }
 
         maybeAddTrieToCache(addedTrie);

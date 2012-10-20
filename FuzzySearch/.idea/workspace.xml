@@ -86,7 +86,7 @@
             <file leaf-file-name="ActivePriorityNode.java" pinned="false" current="false" current-in-tab="true">
               <entry file="file://$PROJECT_DIR$/src/ActivePriorityNode.java">
                 <provider selected="true" editor-type-id="text-editor">
-                  <state line="151" column="99" selection-start="5967" selection-end="5967" vertical-scroll-proportion="0.018558951">
+                  <state line="113" column="28" selection-start="4377" selection-end="4377" vertical-scroll-proportion="1.0393013">
                     <folding />
                   </state>
                 </provider>
@@ -100,10 +100,10 @@
       <content type="file-editors">
         <state>
           <leaf>
-            <file leaf-file-name="Trie.java" pinned="false" current="false" current-in-tab="true">
+            <file leaf-file-name="Trie.java" pinned="false" current="true" current-in-tab="true">
               <entry file="file://$PROJECT_DIR$/src/Trie.java">
                 <provider selected="true" editor-type-id="text-editor">
-                  <state line="43" column="55" selection-start="1312" selection-end="1312" vertical-scroll-proportion="0.45748118">
+                  <state line="55" column="0" selection-start="1775" selection-end="1775" vertical-scroll-proportion="0.60387516">
                     <folding>
                       <element signature="e#467#476#0" expanded="true" />
                     </folding>
@@ -175,7 +175,7 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="TrieTest.java" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="TrieTest.java" pinned="false" current="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/TrieTest.java">
           <provider selected="true" editor-type-id="text-editor">
             <state line="43" column="39" selection-start="1239" selection-end="1239" vertical-scroll-proportion="1.4381443">
@@ -230,8 +230,8 @@
         <option value="$PROJECT_DIR$/src/Link.java" />
         <option value="$PROJECT_DIR$/src/TriePriorityTraverser.java" />
         <option value="$PROJECT_DIR$/src/ActivePriorityNode.java" />
-        <option value="$PROJECT_DIR$/src/Trie.java" />
         <option value="$PROJECT_DIR$/src/TrieTest.java" />
+        <option value="$PROJECT_DIR$/src/Trie.java" />
       </list>
     </option>
   </component>
@@ -561,7 +561,7 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="1912" y="-8" width="1696" height="1026" extended-state="6" />
-    <editor active="false" />
+    <editor active="true" />
     <layout>
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="JetGradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -699,13 +699,6 @@
         <state line="29" column="95" selection-start="933" selection-end="933" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/ActivePriorityNode.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="151" column="99" selection-start="5967" selection-end="5967" vertical-scroll-proportion="0.018558951">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/Index.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="32" column="12" selection-start="1000" selection-end="1000" vertical-scroll-proportion="0.0">
@@ -718,19 +711,26 @@
         <state line="27" column="28" selection-start="1091" selection-end="1091" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/Trie.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="43" column="55" selection-start="1312" selection-end="1312" vertical-scroll-proportion="0.45748118">
-          <folding>
-            <element signature="e#467#476#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/TrieTest.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="43" column="39" selection-start="1239" selection-end="1239" vertical-scroll-proportion="1.4381443">
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/ActivePriorityNode.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="113" column="28" selection-start="4377" selection-end="4377" vertical-scroll-proportion="1.0393013">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/Trie.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="55" column="0" selection-start="1775" selection-end="1775" vertical-scroll-proportion="0.60387516">
+          <folding>
+            <element signature="e#467#476#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
