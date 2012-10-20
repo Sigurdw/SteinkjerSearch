@@ -65,36 +65,11 @@ public class ActivePriorityNode {
         queryPosition.printOrderedChildren();
         double[] ranks = {0, 0, backlink.getRank(), 0};
 
-        Trie<Document> match = queryPosition.getChildren().get(getCharacter());
-        if(match != null && !matchUsed){
-            ranks[0] = getDiscountRank(match, previousEdits);
-            System.out.println("Got match with label: " + match.getLabel() + " and rank: " + match.getRank());
-        }
+        Trie<Document> match = GetMatchAndUpdateRanks(ranks);
 
-        Trie<Document> bestNode = null;
-        if(nextChild < queryPosition.getSize()){
-            bestNode = queryPosition.getOrderedChild(nextChild);
-        }
+        Trie<Document> bestNode = GetBestOfOrderedChildrenAndUpdateRanks(ranks, match);
 
-        if(bestNode != null){
-            if(bestNode == match){
-                nextChild++;
-                if(nextChild < queryPosition.getSize()){
-                    bestNode = queryPosition.getOrderedChild(nextChild);
-                }
-            }
-
-            if(bestNode != null) {
-                ranks[1] = getDiscountRank(bestNode, previousEdits + 1);
-                System.out.println("Got best with label: " + bestNode.getLabel() + " and rank: " + ranks[1]);
-            }
-        }
-
-        Link bestForwardLink = forwardLinks.peek();
-        if(bestForwardLink != null){
-            ranks[3] = bestForwardLink.getRank();
-            System.out.println("Got best forward link with label: " + bestForwardLink.getActivePriorityNode().getLabel() + " and rank: " + bestForwardLink.getRank());
-        }
+        GetBestForwardNodeAndUpdateRanks(ranks);
 
         ActivePriorityNode nextActivePriorityNode = null;
         Link newBacklink;
@@ -140,6 +115,45 @@ public class ActivePriorityNode {
         return nextActivePriorityNode;
     }
 
+    private void GetBestForwardNodeAndUpdateRanks(double[] ranks) {
+        Link bestForwardLink = forwardLinks.peek();
+        if(bestForwardLink != null){
+            ranks[3] = bestForwardLink.getRank();
+            System.out.println("Got best forward link with label: " + bestForwardLink.getActivePriorityNode().getLabel() + " and rank: " + bestForwardLink.getRank());
+        }
+    }
+
+    private Trie<Document> GetBestOfOrderedChildrenAndUpdateRanks(double[] ranks, Trie<Document> match) {
+        Trie<Document> bestNode = null;
+        if(nextChild < queryPosition.getSize()){
+            bestNode = queryPosition.getOrderedChild(nextChild);
+        }
+
+        if(bestNode != null){
+            if(bestNode == match){
+                nextChild++;
+                if(nextChild < queryPosition.getSize()){
+                    bestNode = queryPosition.getOrderedChild(nextChild);
+                }
+            }
+
+            if(bestNode != null) {
+                ranks[1] = getDiscountRank(bestNode, previousEdits + 1);
+                System.out.println("Got best with label: " + bestNode.getLabel() + " and rank: " + ranks[1]);
+            }
+        }
+        return bestNode;
+    }
+
+    private Trie<Document> GetMatchAndUpdateRanks(double[] ranks) {
+        Trie<Document> match = queryPosition.getChildren().get(getCharacter());
+        if(match != null && !matchUsed){
+            ranks[0] = getDiscountRank(match, previousEdits);
+            System.out.println("Got match with label: " + match.getLabel() + " and rank: " + match.getRank());
+        }
+        return match;
+    }
+
     private void setBacklink(Link newBacklink) {
         backlink = newBacklink;
     }
@@ -163,8 +177,30 @@ public class ActivePriorityNode {
         }
     }
 
-    public void getSuggestions(ArrayList<String> suggestionList){
-        if(queryPosition.getData().size() > 0 && !selfSuggestionUsed){
+    public void getSuggestions(ArrayList<String> suggestionList, int neededSuggestions){
+        int numberOfUsedSuggestions = 0;
+        ArrayList<Trie<Document>> suggestions = queryPosition.getCachedSuggestions();
+        for (int i = nextSuggestion; i < Math.max(nextSuggestion + neededSuggestions, suggestions.size()); i++){
+            Trie<Document> suggestionDocument = suggestions.get(i);
+            if(backlink.getRank() > getDiscountRank(suggestionDocument, previousEdits)){
+                System.out.println("Suggestions: " + suggestions);
+                System.out.println("Node: " + suggestionDocument + ", rank: " + getDiscountRank(suggestionDocument, previousEdits));
+                System.out.println("previous edits: " + previousEdits);
+                System.out.println("Done finding suggestions here. " + i + ", " + nextSuggestion);
+                System.out.println("Backlink: " + backlink.getActivePriorityNode() + "rank: " + backlink.getRank());
+                break;
+            }
+
+            suggestionList.add(suggestionDocument.getLabel() + ", " + getDiscountRank(suggestionDocument, previousEdits));
+            numberOfUsedSuggestions++;
+        }
+
+        nextSuggestion += numberOfUsedSuggestions;
+
+        System.out.println("Got these:");
+        System.out.println(suggestionList);
+
+        /*if(queryPosition.getData().size() > 0 && !selfSuggestionUsed){
             suggestionList.add(queryPosition.getLabel() + ", " + getDiscountRank(queryPosition, previousEdits));
             selfSuggestionUsed = true;
         }
@@ -188,7 +224,7 @@ public class ActivePriorityNode {
         System.out.println(suggestionList);
         if(nextSuggestion < queryPosition.getSize()){
             System.out.println("Next suggestion is: " + nextSuggestion + ", point to: " + queryPosition.getOrderedChild(nextSuggestion));
-        }
+        }*/
     }
 
     public ActivePriorityNode travelTheBacklink() {

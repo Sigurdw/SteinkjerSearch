@@ -26,7 +26,7 @@ public class TriePriorityTraverser {
         while(activePriorityNode != null){
             System.out.println("inner iteration on " + character);
             if(activePriorityNode.isExhausted()){
-                activePriorityNode.getSuggestions(suggestions);
+                activePriorityNode.getSuggestions(suggestions, numberOfRequiredSuggestions - suggestions.size());
                 if(previousExhaustedActivePriorityNode != null){
                     System.out.println("Adding shortcut link.");
                     previousExhaustedActivePriorityNode.addLink(new Link(activePriorityNode.getRank(), activePriorityNode, true));

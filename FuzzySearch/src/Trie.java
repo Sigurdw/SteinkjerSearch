@@ -8,7 +8,8 @@ public class Trie<T> implements Comparable<Trie<T>> {
     private Map<Character, Trie<T>> children = new HashMap<Character, Trie<T>>();
     private ArrayList<Trie<T>> rankSortedChildren = new ArrayList<Trie<T>>();
     private String label;
-    private PriorityQueue<Trie<T>> suggestionCache = new PriorityQueue<Trie<T>>();
+    private ArrayList<Trie<T>> suggestionCache = new ArrayList<Trie<T>>();
+    private int cacheSize = 4;
     private int termFrequency = 0;
 
     private double rank;
@@ -34,7 +35,8 @@ public class Trie<T> implements Comparable<Trie<T>> {
             }
 
             termFrequency++;
-            rank = Math.max((double)termFrequency / (double)dataList.size(), rank);
+            System.out.println("TermFrequency: " + termFrequency + ", Size: " + dataList.size());
+            rank = (double)termFrequency / (double)dataList.size();
 
             addedTrie = this;
         }
@@ -75,14 +77,20 @@ public class Trie<T> implements Comparable<Trie<T>> {
     }
 
     private void maybeAddTrieToCache(Trie<T> addedTrie) {
-        suggestionCache.add(addedTrie);
+        if(!suggestionCache.contains(addedTrie)){
+            suggestionCache.add(addedTrie);
+            Collections.sort(suggestionCache);
+            if(suggestionCache.size() > cacheSize){
+                suggestionCache.remove(cacheSize);
+            }
+        }
     }
 
     public ArrayList<T> search(String key ){
         return search(key, 0);
     }
 
-    public PriorityQueue<Trie<T>> getCachedSuggestions(){
+    public ArrayList<Trie<T>> getCachedSuggestions(){
         return suggestionCache;
     }
 
