@@ -1,5 +1,8 @@
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+package Query;
+
+import Index.Index;
+import Query.ActiveQuery;
+
 import java.util.ArrayList;
 
 /**
@@ -29,8 +32,8 @@ public class InteractiveSearchHandler{
 
     private void addCharacter(String queryStr, char character){
         System.out.println("Got: " + character);
-        //ArrayList<ActiveQuery> nextActiveQueries = new ArrayList<ActiveQuery>();
-        //for(ActiveQuery activeQuery : activeQueries){
+        //ArrayList<Query.ActiveQuery> nextActiveQueries = new ArrayList<Query.ActiveQuery>();
+        //for(Query.ActiveQuery activeQuery : activeQueries){
         //    activeQuery.addCharacter(character, nextActiveQueries);
         //}
 
@@ -40,7 +43,7 @@ public class InteractiveSearchHandler{
                 + " active queries. Now there are "
                 + nextActiveQueries.size() + " active queries.");*/
 
-        //for(ActiveQuery nextActiveQuery : nextActiveQueries){
+        //for(Query.ActiveQuery nextActiveQuery : nextActiveQueries){
         //    //System.out.println(nextActiveQuery);
         //}
 
@@ -72,7 +75,7 @@ public class InteractiveSearchHandler{
 
     public ArrayList<String> getSearchResults() {
         /*ArrayList<String> results = new ArrayList<String>();
-        for(ActiveQuery activeQuery : activeQueries){
+        for(Query.ActiveQuery activeQuery : activeQueries){
             results.add(activeQuery.getLabel());
         }
 

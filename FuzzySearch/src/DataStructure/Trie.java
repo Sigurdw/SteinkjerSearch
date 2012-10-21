@@ -1,6 +1,5 @@
-import sun.font.TrueTypeFont;
+package DataStructure;
 
-import javax.transaction.TransactionRolledbackException;
 import java.util.*;
 
 public class Trie<T> implements Comparable<Trie<T>> {
@@ -79,11 +78,15 @@ public class Trie<T> implements Comparable<Trie<T>> {
     private void maybeAddTrieToCache(Trie<T> addedTrie) {
         if(!suggestionCache.contains(addedTrie)){
             suggestionCache.add(addedTrie);
-            Collections.sort(suggestionCache);
-            if(suggestionCache.size() > cacheSize){
-                suggestionCache.remove(cacheSize);
-            }
         }
+
+        Collections.sort(suggestionCache);
+
+        if(suggestionCache.size() > cacheSize){
+            suggestionCache.remove(cacheSize);
+        }
+
+        System.out.println("SuggestionCache for node with label " + label + ", " + suggestionCache);
     }
 
     public ArrayList<T> search(String key ){

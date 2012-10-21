@@ -1,3 +1,8 @@
+package Query;
+
+import DataStructure.Trie;
+import DocumentModel.IDocument;
+
 import java.util.*;
 
 /**
@@ -9,13 +14,13 @@ import java.util.*;
  * To change this template use File | Settings | File Templates.
  */
 public class ActiveQuery {
-    Trie<Document> queryPosition;
+    Trie<IDocument> queryPosition;
     int allowedEdits;
     EditOperation lastEditOperation;
     Link backlink;
 
     public ActiveQuery(
-            Trie<Document> queryPosition,
+            Trie<IDocument> queryPosition,
             int allowedEdits,
             EditOperation lastEditOperation)
     {
@@ -25,11 +30,11 @@ public class ActiveQuery {
     }
 
     public void addCharacter(char character, ArrayList<ActiveQuery> activeQueries){
-        Map<Character, Trie<Document>> candidateQueryPositions = queryPosition.getChildren();
+        Map<Character, Trie<IDocument>> candidateQueryPositions = queryPosition.getChildren();
         for(Character candidatePath : candidateQueryPositions.keySet()){
-            Trie<Document> newQueryPosition = candidateQueryPositions.get(candidatePath);
+            Trie<IDocument> newQueryPosition = candidateQueryPositions.get(candidatePath);
             if(candidatePath == character){
-                activeQueries.add(new ActiveQuery(newQueryPosition, allowedEdits, EditOperation.Insert));
+                activeQueries.add(new ActiveQuery(newQueryPosition, allowedEdits, EditOperation.Match));
             }
             else{
                 processEdits(character, newQueryPosition, activeQueries);
@@ -41,7 +46,7 @@ public class ActiveQuery {
 
     private void processEdits(
             char character,
-            Trie<Document> newQueryPosition,
+            Trie<IDocument> newQueryPosition,
             ArrayList<ActiveQuery> activeQueries)
     {
         if(allowedEdits > 0){
@@ -52,14 +57,14 @@ public class ActiveQuery {
 
     private void processAdd(
             char character,
-            Trie<Document> newQueryPosition,
+            Trie<IDocument> newQueryPosition,
             ArrayList<ActiveQuery> activeQueries)
     {
         if(isAllowedToAdd()){
             ActiveQuery tempActiveQuery = new ActiveQuery(
                     newQueryPosition,
                     allowedEdits - 1,
-                    EditOperation.Addition);
+                    EditOperation.Insert);
 
              tempActiveQuery.addCharacter(character, activeQueries);
         }
@@ -70,7 +75,7 @@ public class ActiveQuery {
     }
 
 
-    private void processSubstitution(Trie<Document> newQueryPosition, ArrayList<ActiveQuery> activeQueries) {
+    private void processSubstitution(Trie<IDocument> newQueryPosition, ArrayList<ActiveQuery> activeQueries) {
         if(isAllowedToSubstitute()){
             activeQueries.add(
                     new ActiveQuery(newQueryPosition, allowedEdits - 1, EditOperation.Substitution));
@@ -88,11 +93,11 @@ public class ActiveQuery {
     }
 
     private boolean isAllowToDelete() {
-        return lastEditOperation != EditOperation.Addition && allowedEdits > 0;
+        return lastEditOperation != EditOperation.Insert && allowedEdits > 0;
     }
 
     public String toString(){
-        return "ActiveQuery: " + queryPosition.getLabel() + " Last operation: " + lastEditOperation + " allowed edits: " + allowedEdits;
+        return "Query.ActiveQuery: " + queryPosition.getLabel() + " Last operation: " + lastEditOperation + " allowed edits: " + allowedEdits;
     }
 
     public String getLabel() {

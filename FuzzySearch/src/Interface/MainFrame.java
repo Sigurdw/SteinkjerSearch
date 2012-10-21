@@ -1,3 +1,12 @@
+package Interface;
+
+import DocumentModel.Document;
+import DocumentModel.IDocument;
+import Index.Index;
+import Index.Indexer;
+import Index.Crawler;
+import Query.InteractiveSearchHandler;
+
 import javax.swing.*;
 import java.util.ArrayList;
 
@@ -18,10 +27,10 @@ public class MainFrame extends JFrame {
     public MainFrame(){
         setSize(width, height);
         Crawler crawler = new Crawler(directoryPath);
-        ArrayList<Document> documents = crawler.crawlDirectory();
+        ArrayList<IDocument> documents = crawler.crawlDirectory();
         Indexer indexer = new Indexer();
         Index index = indexer.indexDocuments(documents);
-        //ArrayList<Document> result = index.search("the");
+        //ArrayList<DocumentModel.Document> result = index.search("the");
         InteractiveSearchHandler interactiveSearchHandler = new InteractiveSearchHandler(index);
         SearchPanel searchPanel = new SearchPanel(interactiveSearchHandler);
         add(searchPanel);

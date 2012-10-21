@@ -1,3 +1,11 @@
+package Query;
+
+import DataStructure.Trie;
+import DocumentModel.IDocument;
+import Query.ActivePriorityNode;
+import Query.Link;
+import Query.QueryString;
+
 import java.util.ArrayList;
 
 /**
@@ -13,7 +21,7 @@ public class TriePriorityTraverser {
     private final int NumberOfRequiredSuggestions = 4;
     private final QueryString queryString;
 
-    public TriePriorityTraverser(Trie<Document> root, QueryString queryString){
+    public TriePriorityTraverser(Trie<IDocument> root, QueryString queryString){
         rootActiveNode = new ActivePriorityNode(root, queryString);
         this.queryString = queryString;
     }
@@ -29,7 +37,10 @@ public class TriePriorityTraverser {
                 activePriorityNode.getSuggestions(suggestions, numberOfRequiredSuggestions - suggestions.size());
                 if(previousExhaustedActivePriorityNode != null){
                     System.out.println("Adding shortcut link.");
-                    previousExhaustedActivePriorityNode.addLink(new Link(activePriorityNode.getRank(), activePriorityNode, true));
+                    previousExhaustedActivePriorityNode.addLink(
+                            new ShortcutLink(
+                                    activePriorityNode.getRank(),
+                                    activePriorityNode));
                 }
                 else{
                     System.out.println("Setting new root: " + activePriorityNode);
@@ -37,12 +48,10 @@ public class TriePriorityTraverser {
                 }
 
                 previousExhaustedActivePriorityNode = activePriorityNode;
-                if(suggestions.size() >= NumberOfRequiredSuggestions){
-                    break;
-                }
-                else{
-                    activePriorityNode = activePriorityNode.travelTheBacklink();
-                }
+            }
+
+            if(suggestions.size() >= NumberOfRequiredSuggestions){
+                break;
             }
             else{
                 activePriorityNode = activePriorityNode.getBestNextActiveNode();

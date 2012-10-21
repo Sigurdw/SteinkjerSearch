@@ -1,3 +1,5 @@
+package Query;
+
 /**
  * Created with IntelliJ IDEA.
  * User: t-swien
