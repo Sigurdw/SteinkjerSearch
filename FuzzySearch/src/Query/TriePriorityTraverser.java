@@ -53,9 +53,8 @@ public class TriePriorityTraverser {
             if(suggestions.size() >= NumberOfRequiredSuggestions){
                 break;
             }
-            else{
-                activePriorityNode = activePriorityNode.getBestNextActiveNode();
-            }
+
+            activePriorityNode = activePriorityNode.getBestNextActiveNode();
         }
 
         return suggestions;

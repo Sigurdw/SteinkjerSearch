@@ -10,7 +10,7 @@ public class BackLink extends Link{
 
     @Override
     public ActivePriorityNode UseLink() {
-        System.out.print("Using back link: " + this);
+        System.out.println("Using back link: " + this);
         return destination;
     }
 

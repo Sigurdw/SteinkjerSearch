@@ -19,10 +19,6 @@ public class QueryString {
         System.out.println("Query is now: " + queryString);
     }
 
-    public String GetQueryString(){
-        return queryString;
-    }
-
     public char GetCharacter(int queryStringIndex){
         char character = 0;
         if(!IsExhausted(queryStringIndex)){

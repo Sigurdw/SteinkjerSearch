@@ -59,17 +59,11 @@ public class ActivePriorityNode {
     public ActivePriorityNode getBestNextActiveNode() {
         maybeDoFirstAdd();
         System.out.println("Getting best next node at " + this + " with children:");
+        System.out.println(forwardLinks.size());
         queryPosition.printOrderedChildren();
         Link link = GetBestLink();
+        System.out.println(link.getRank());
         return link.UseLink();
-    }
-
-    private void maybeDoFirstAdd() {
-        if(!firstAdded){
-            firstAdded = true;
-            AddMatchToList();
-            AddNextEditsToList();
-        }
     }
 
     private Link GetBestLink() {
@@ -81,24 +75,55 @@ public class ActivePriorityNode {
         return link;
     }
 
+    private void maybeDoFirstAdd() {
+        if(!isExhausted() && !firstAdded){
+            System.out.println("initializing priority list at " + this);
+            firstAdded = true;
+            AddMatchToList();
+            AddDeleteToList();
+            AddNextEditsToList();
+        }
+    }
+
     private void AddMatchToList(){
-        Trie<IDocument> match = queryPosition.getChildren().get(getCharacter());
-        if(match != null && !firstAdded){
-            double rank = getDiscountRank(match, previousEdits);
-            System.out.println("Got match with label: " + match.getLabel() + " and rank: " + rank);
-            addLink(new MatchLink(rank, this, match));
+        if(EditOperation.isOperationAllowed(lastEditOperation, EditOperation.Insert)){
+            Trie<IDocument> match = queryPosition.getChildren().get(getCharacter());
+            System.out.println(match);
+            if(match != null){
+                double rank = getDiscountRank(match, previousEdits);
+                System.out.println("Got match with label: " + match.getLabel() + " and rank: " + rank);
+                addLink(new MatchLink(rank, this, match));
+            }
+        }
+    }
+
+    private void AddDeleteToList(){
+        if(EditOperation.isOperationAllowed(lastEditOperation, EditOperation.Delete)){
+            if(lastEditOperation == EditOperation.Insert){
+                double deleteRank = getDiscountRank(queryPosition, previousEdits + 1);
+                Link deleteLink = new EditLink(deleteRank, this, queryPosition, EditOperation.Delete);
+                forwardLinks.add(deleteLink);
+            }
+            else{
+                Trie<IDocument> match = queryPosition.getChildren().get(getCharacter());
+                if(match != null){
+                    double deleteRank = getDiscountRank(match, previousEdits + 1);
+                    Link deleteLink = new EditLink(deleteRank, this, queryPosition, EditOperation.Delete);
+                    forwardLinks.add(deleteLink);
+                }
+            }
         }
     }
 
     private void AddNextEditsToList() {
-        Trie<IDocument> bestEditNode = getNextEditNode();
-        if(bestEditNode != null){
-            double rank = getDiscountRank(bestEditNode, previousEdits + 1);
-            System.out.println("Got best with label: " + bestEditNode.getLabel() + " and rank: " + rank);
-            EditLink substitutionLink = new EditLink(rank, this, bestEditNode, EditOperation.Substitution);
-            forwardLinks.add(substitutionLink);
-            EditLink insertLink = new EditLink(rank, this, bestEditNode, EditOperation.Insert);
-            forwardLinks.add(insertLink);
+        if(EditOperation.isOperationAllowed(lastEditOperation, EditOperation.Insert)){
+            Trie<IDocument> bestEditNode = getNextEditNode();
+            if(bestEditNode != null){
+                double rank = getDiscountRank(bestEditNode, previousEdits + 1);
+                System.out.println("Got best with label: " + bestEditNode.getLabel() + " and rank: " + rank);
+                EditLink insertLink = new EditLink(rank, this, bestEditNode, EditOperation.Insert);
+                forwardLinks.add(insertLink);
+            }
         }
     }
 
@@ -106,29 +131,19 @@ public class ActivePriorityNode {
         Trie<IDocument> bestEditNode = null;
         if(nextChild < queryPosition.getSize()){
             bestEditNode = queryPosition.getOrderedChild(nextChild);
+            nextChild++;
             Trie<IDocument> match = queryPosition.getChildren().get(getCharacter());
             if(bestEditNode == match){
                 System.out.println("fixing match");
-                nextChild++;
                 bestEditNode = null;
                 if(nextChild < queryPosition.getSize()){
                     bestEditNode = queryPosition.getOrderedChild(nextChild);
+                    nextChild++;
                 }
             }
         }
 
         return bestEditNode;
-    }
-
-    private int argMax(double[] list){
-        int maxIndex = 0;
-        for(int i = 1; i < list.length; i++){
-            if(list[i] > list [maxIndex]){
-                maxIndex = i;
-            }
-        }
-
-        return maxIndex;
     }
 
     public void addLink(Link link){
@@ -209,14 +224,8 @@ public class ActivePriorityNode {
         return node.getRank() * Math.pow(0.5, edits);
     }
 
-    private void printRanks(double[] ranks){
-        for(double rank : ranks){
-            System.out.println("Rank: " + rank);
-        }
-    }
-
     public ActivePriorityNode createChild(Trie<IDocument> position, EditOperation editOperation) {
-        int cost = EditOperation.getOperationCost(editOperation);
+        int cost = EditOperation.getOperationCost(lastEditOperation, editOperation);
         int movement = EditOperation.getOperationMovement(editOperation);
         if(editOperation == EditOperation.Insert){
             AddNextEditsToList();

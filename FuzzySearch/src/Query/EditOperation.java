@@ -11,8 +11,34 @@ package Query;
 public enum EditOperation {
     Insert,
     Delete,
-    Substitution,
+    Substitution,  //depricated
     Match;
+
+    public static boolean isOperationAllowed(EditOperation previousEdit, EditOperation editOperation){
+        boolean allowed = true;
+        if(previousEdit == EditOperation.Delete && editOperation == EditOperation.Insert){
+            allowed = false;
+        }
+
+        if(editOperation == EditOperation.Substitution){
+            allowed = false;
+        }
+
+        return allowed;
+    }
+
+    public static int getOperationCost(EditOperation previousEdit, EditOperation editOperation){
+        int cost;
+
+        if(previousEdit == EditOperation.Insert && editOperation == EditOperation.Delete){
+            cost = 0;
+        }
+        else{
+            cost = getOperationCost(editOperation);
+        }
+
+        return cost;
+    }
 
     public static int getOperationCost(EditOperation editOperation){
         int cost = -1;
@@ -40,10 +66,10 @@ public enum EditOperation {
 
         switch (editOperation){
             case Insert:
-                movement = 1;
+                movement = 0;
                 break;
             case Delete:
-                movement = 0;
+                movement = 1;
                 break;
             case Match:
                 movement = 1;
