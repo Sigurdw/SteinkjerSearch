@@ -144,7 +144,7 @@ public class ActivePriorityNode {
         ignoreBackLink = true;
     }
 
-    public void getSuggestions(ArrayList<String> suggestionList, int neededSuggestions){
+    public void getSuggestions(ArrayList<Trie<IDocument>> suggestionNodes, int neededSuggestions){
         int numberOfUsedSuggestions = 0;
         System.out.println("Getting suggestions, need: " + neededSuggestions);
         ArrayList<Trie<IDocument>> suggestions = queryPosition.getCachedSuggestions();
@@ -154,12 +154,15 @@ public class ActivePriorityNode {
                 break;
             }
 
-            suggestionList.add(suggestionDocument.getLabel() + ", " + getDiscountRank(suggestionDocument, previousEdits));
+            if(!suggestionNodes.contains(suggestionDocument)){
+                suggestionNodes.add(suggestionDocument);
+            }
+
             numberOfUsedSuggestions++;
         }
 
         nextSuggestion += numberOfUsedSuggestions;
-        System.out.println("Got these: " + suggestionList);
+        System.out.println("Got these: " + suggestionNodes);
     }
 
     public double getRank() {

@@ -13,16 +13,16 @@ public class TriePriorityTraverser {
     }
 
     public ArrayList<String> addCharacter(char character, int numberOfRequiredSuggestions){
-        ArrayList<String> suggestions = new ArrayList<String>(numberOfRequiredSuggestions);
         ActivePriorityNode activePriorityNode = rootActiveNode.getBestNextActiveNode();
         ActivePriorityNode previousExhaustedActivePriorityNode = null;
 
+        ArrayList<Trie<IDocument>> suggestionNodes = new ArrayList<Trie<IDocument>>();
         int numberOfIterations = 0;
         while(activePriorityNode != null){
             numberOfIterations++;
             System.out.println("inner iteration on " + character);
             if(activePriorityNode.isExhausted()){
-                activePriorityNode.getSuggestions(suggestions, NumberOfRequiredSuggestions - suggestions.size());
+                activePriorityNode.getSuggestions(suggestionNodes, NumberOfRequiredSuggestions - suggestionNodes.size());
                 if(previousExhaustedActivePriorityNode != null){
                     ShortcutLink shortcutLink = new ShortcutLink(
                             activePriorityNode.getRank(),
@@ -38,7 +38,7 @@ public class TriePriorityTraverser {
                 previousExhaustedActivePriorityNode = activePriorityNode;
             }
 
-            if(suggestions.size() >= NumberOfRequiredSuggestions){
+            if(suggestionNodes.size() >= NumberOfRequiredSuggestions){
                 break;
             }
 
@@ -46,6 +46,11 @@ public class TriePriorityTraverser {
         }
 
         System.out.println("The number of iterations was: " + numberOfIterations);
+
+        ArrayList<String> suggestions = new ArrayList<String>(numberOfRequiredSuggestions);
+        for(Trie<IDocument> suggestionNode : suggestionNodes){
+            suggestions.add(suggestionNode.getLabel());
+        }
 
         return suggestions;
     }
