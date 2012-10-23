@@ -6,7 +6,7 @@ import java.util.ArrayList;
 
 public class TriePriorityTraverser {
     private ActivePriorityNode rootActiveNode;
-    private final int NumberOfRequiredSuggestions = 3;
+    private final int NumberOfRequiredSuggestions = 10;
 
     public TriePriorityTraverser(Trie<IDocument> root, QueryString queryString){
         rootActiveNode = new ActivePriorityNode(root, queryString);
