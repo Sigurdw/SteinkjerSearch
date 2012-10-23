@@ -62,7 +62,7 @@ public class InteractiveSearchHandler{
             }
         }
         else{
-            activeQueries.clear();
+            query = index.initFastInteractiveSearch(this.queryString);
             activeQueries.add(index.initInteractiveSearch());
             for(int i = 0; i < queryString.length(); i++){
                 char queryCharacter = queryString.charAt(i);
