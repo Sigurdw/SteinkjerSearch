@@ -9,20 +9,24 @@ package Query;
  * To change this template use File | Settings | File Templates.
  */
 public class ShortcutLink extends Link {
+    private ActivePriorityNode source;
     private ActivePriorityNode destinationNode;
 
-    public ShortcutLink(double rank, ActivePriorityNode destinationNode) {
+    public ShortcutLink(double rank, ActivePriorityNode source, ActivePriorityNode destinationNode) {
         super(rank);
+        this.source = source;
         this.destinationNode = destinationNode;
     }
 
     @Override
     public ActivePriorityNode UseLink() {
         System.out.println("Using shortcut link: " + this);
+        BackLink backLink = source.makeBackLink(destinationNode);
+        destinationNode.addLink(backLink);
         return destinationNode;
     }
 
     public String toString(){
-        return "ShortcutLink to " + destinationNode.getLabel();
+        return "ShortcutLink from " + source.getLabel() + " to " + destinationNode.getLabel();
     }
 }

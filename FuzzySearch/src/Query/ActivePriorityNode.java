@@ -17,7 +17,7 @@ public class ActivePriorityNode {
     private int nextSuggestion = 0;
     private QueryString queryString;
 
-    private PriorityQueue<Link> forwardLinks = new PriorityQueue<Link>();
+    private PriorityQueue<Link> linkQueue = new PriorityQueue<Link>();
 
     ActivePriorityNode(
             Trie<IDocument> queryPosition,
@@ -33,7 +33,8 @@ public class ActivePriorityNode {
         this.lastEditOperation = lastEditOperation;
         this.queryStringIndex = queryStringIndex;
         this.queryString = queryString;
-        forwardLinks.add(backlink);
+        backlink.setSource(this);
+        linkQueue.add(backlink);
     }
 
     public ActivePriorityNode(Trie<IDocument> rootNode, QueryString queryString){
@@ -59,7 +60,7 @@ public class ActivePriorityNode {
     public ActivePriorityNode getBestNextActiveNode() {
         maybeDoFirstAdd();
         System.out.println("Getting best next node at " + this + " with children:");
-        System.out.println(forwardLinks.size());
+        System.out.println(linkQueue.size());
         queryPosition.printOrderedChildren();
         Link link = GetBestLink();
         System.out.println(link.getRank());
@@ -67,9 +68,9 @@ public class ActivePriorityNode {
     }
 
     private Link GetBestLink() {
-        Link link = forwardLinks.poll();
+        Link link = linkQueue.poll();
         if(link != null && link instanceof BackLink && ignoreBackLink){
-            link = forwardLinks.poll();
+            link = linkQueue.poll();
         }
 
         return link;
@@ -102,14 +103,14 @@ public class ActivePriorityNode {
             if(lastEditOperation == EditOperation.Insert){
                 double deleteRank = getDiscountRank(queryPosition, previousEdits + 1);
                 Link deleteLink = new EditLink(deleteRank, this, queryPosition, EditOperation.Delete);
-                forwardLinks.add(deleteLink);
+                linkQueue.add(deleteLink);
             }
             else{
                 Trie<IDocument> match = queryPosition.getChildren().get(getCharacter());
                 if(match != null){
                     double deleteRank = getDiscountRank(match, previousEdits + 1);
                     Link deleteLink = new EditLink(deleteRank, this, queryPosition, EditOperation.Delete);
-                    forwardLinks.add(deleteLink);
+                    linkQueue.add(deleteLink);
                 }
             }
         }
@@ -122,7 +123,7 @@ public class ActivePriorityNode {
                 double rank = getDiscountRank(bestEditNode, previousEdits + 1);
                 System.out.println("Got best with label: " + bestEditNode.getLabel() + " and rank: " + rank);
                 EditLink insertLink = new EditLink(rank, this, bestEditNode, EditOperation.Insert);
-                forwardLinks.add(insertLink);
+                linkQueue.add(insertLink);
             }
         }
     }
@@ -147,7 +148,7 @@ public class ActivePriorityNode {
     }
 
     public void addLink(Link link){
-        forwardLinks.add(link);
+        linkQueue.add(link);
 
         if(link instanceof ShortcutLink){
             ignoreBackLink = true;
@@ -159,7 +160,7 @@ public class ActivePriorityNode {
         ArrayList<Trie<IDocument>> suggestions = queryPosition.getCachedSuggestions();
         for (int i = nextSuggestion; i < Math.max(nextSuggestion + neededSuggestions, suggestions.size()); i++){
             Trie<IDocument> suggestionDocument = suggestions.get(i);
-            if(forwardLinks.peek().getRank() > getDiscountRank(suggestionDocument, previousEdits)){
+            if(linkQueue.peek().getRank() > getDiscountRank(suggestionDocument, previousEdits)){
                 System.out.println("Suggestions: " + suggestions);
                 System.out.println("Node: " + suggestionDocument + ", rank: " + getDiscountRank(suggestionDocument, previousEdits));
                 System.out.println("previous edits: " + previousEdits);
@@ -177,7 +178,48 @@ public class ActivePriorityNode {
         System.out.println(suggestionList);
     }
 
+    public double getRank() {
+        return getDiscountRank(queryPosition, previousEdits);
+    }
+
+    private static double getDiscountRank(Trie<IDocument> node, int edits){
+        return node.getRank() * Math.pow(0.5, edits);
+    }
+
+    public ActivePriorityNode createChild(Trie<IDocument> position, EditOperation editOperation) {
+        int cost = EditOperation.getOperationCost(lastEditOperation, editOperation);
+        int movement = EditOperation.getOperationMovement(editOperation);
+        if(editOperation == EditOperation.Insert){
+            AddNextEditsToList();
+        }
+
+        BackLink backlink = new BackLink(getNextRank(), this);
+        return new ActivePriorityNode(
+                position,
+                previousEdits + cost,
+                editOperation,
+                backlink,
+                queryStringIndex + movement,
+                queryString);
+    }
+
+    public ForwardLink makeForwardLink(ActivePriorityNode source) {
+        return new ForwardLink(getNextRank(), source ,this);
+    }
+
+    public BackLink makeBackLink(ActivePriorityNode sourceOfBackLink){
+        return new BackLink(getNextRank(), sourceOfBackLink, this);
+    }
+
     private double getNextRank(){
+        double rank = -2;
+        Link nextLink = linkQueue.peek();
+        if(nextLink != null){
+            rank = nextLink.getRank();
+        }
+
+        return rank;
+        /*
         if(!isExhausted()){
             double bestEditNodeRank = -1;
             Trie<IDocument> bestNode = null;
@@ -198,7 +240,7 @@ public class ActivePriorityNode {
             }
 
             double bestForwardNodeRank = -1;
-            Link bestForwardLink = forwardLinks.peek();
+            Link bestForwardLink = linkQueue.peek();
             if(bestForwardLink != null){
                 bestForwardNodeRank = bestForwardLink.getRank();
             }
@@ -213,31 +255,6 @@ public class ActivePriorityNode {
                 return -1;
             }
         }
-
-    }
-
-    public double getRank() {
-        return getDiscountRank(queryPosition, previousEdits);
-    }
-
-    private static double getDiscountRank(Trie<IDocument> node, int edits){
-        return node.getRank() * Math.pow(0.5, edits);
-    }
-
-    public ActivePriorityNode createChild(Trie<IDocument> position, EditOperation editOperation) {
-        int cost = EditOperation.getOperationCost(lastEditOperation, editOperation);
-        int movement = EditOperation.getOperationMovement(editOperation);
-        if(editOperation == EditOperation.Insert){
-            AddNextEditsToList();
-        }
-
-        BackLink backlink = new BackLink(forwardLinks.peek().getRank(), this);
-        return new ActivePriorityNode(
-                position,
-                previousEdits + cost,
-                editOperation,
-                backlink,
-                queryStringIndex + movement,
-                queryString);
+        */
     }
 }

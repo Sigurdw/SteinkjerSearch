@@ -37,10 +37,12 @@ public class TriePriorityTraverser {
                 activePriorityNode.getSuggestions(suggestions, numberOfRequiredSuggestions - suggestions.size());
                 if(previousExhaustedActivePriorityNode != null){
                     System.out.println("Adding shortcut link.");
-                    previousExhaustedActivePriorityNode.addLink(
-                            new ShortcutLink(
-                                    activePriorityNode.getRank(),
-                                    activePriorityNode));
+                    ShortcutLink shortcutLink = new ShortcutLink(
+                            activePriorityNode.getRank(),
+                            previousExhaustedActivePriorityNode,
+                            activePriorityNode);
+                    previousExhaustedActivePriorityNode.addLink(shortcutLink);
+
                 }
                 else{
                     System.out.println("Setting new root: " + activePriorityNode);
