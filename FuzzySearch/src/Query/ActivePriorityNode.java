@@ -149,10 +149,10 @@ public class ActivePriorityNode {
 
     public void addLink(Link link){
         linkQueue.add(link);
+    }
 
-        if(link instanceof ShortcutLink){
-            ignoreBackLink = true;
-        }
+    public void ignoreBackLinks(){
+        ignoreBackLink = true;
     }
 
     public void getSuggestions(ArrayList<String> suggestionList, int neededSuggestions){
@@ -209,6 +209,10 @@ public class ActivePriorityNode {
 
     public BackLink makeBackLink(ActivePriorityNode sourceOfBackLink){
         return new BackLink(getNextRank(), sourceOfBackLink, this);
+    }
+
+    public ShortcutLink makeShortcutLink(ActivePriorityNode sourceOfShortcutLink){
+        return new ShortcutLink(getNextRank(), sourceOfShortcutLink, this);
     }
 
     private double getNextRank(){

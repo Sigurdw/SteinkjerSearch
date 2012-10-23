@@ -42,6 +42,7 @@ public class TriePriorityTraverser {
                             previousExhaustedActivePriorityNode,
                             activePriorityNode);
                     previousExhaustedActivePriorityNode.addLink(shortcutLink);
+                    previousExhaustedActivePriorityNode.ignoreBackLinks();
 
                 }
                 else{
