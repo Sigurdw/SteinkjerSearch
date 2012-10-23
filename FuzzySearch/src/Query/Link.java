@@ -34,4 +34,8 @@ public abstract class Link implements Comparable<Link> {
             return 0;
         }
     }
+
+    public String toString(){
+        return "Rank: " + rank;
+    }
 }

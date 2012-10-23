@@ -28,6 +28,6 @@ public class BackLink extends Link{
     }
 
     public String toString(){
-        return "BackLink from " + source.getLabel() + " to " + destination.getLabel();
+        return "BackLink from " + source.getLabel() + " to " + destination.getLabel() + " " + super.toString();
     }
 }

@@ -27,6 +27,6 @@ public class ShortcutLink extends Link {
     }
 
     public String toString(){
-        return "ShortcutLink from " + source.getLabel() + " to " + destinationNode.getLabel();
+        return "ShortcutLink from " + source.getLabel() + " to " + destinationNode.getLabel() + " " + super.toString();
     }
 }

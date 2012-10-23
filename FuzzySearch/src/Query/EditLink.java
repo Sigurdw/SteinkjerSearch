@@ -22,6 +22,10 @@ public class EditLink extends Link {
     }
 
     public String toString(){
-        return editOperation + " link from " + souceNode.getLabel() + " to " + position.getLabel();
+        return editOperation +
+                " link from " +
+                souceNode.getLabel() +
+                " to " + position.getLabel() +
+                " " + super.toString();
     }
 }

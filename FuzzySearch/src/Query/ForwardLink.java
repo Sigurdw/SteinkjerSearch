@@ -29,6 +29,9 @@ public class ForwardLink extends Link{
     }
 
     public String toString(){
-        return "ForwardLink from " + source.getLabel() + " to " + destinationNode.getLabel();
+        return "ForwardLink from "
+                + source.getLabel()
+                + " to " + destinationNode.getLabel()
+                + " " + super.toString();
     }
 }

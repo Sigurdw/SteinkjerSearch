@@ -20,6 +20,6 @@ public class MatchLink extends Link{
     }
 
     public String toString(){
-        return "Match from " + sourceNode.getLabel() + " to " + position.getLabel();
+        return "Match from " + sourceNode.getLabel() + " to " + position.getLabel() + " " + super.toString();
     }
 }
