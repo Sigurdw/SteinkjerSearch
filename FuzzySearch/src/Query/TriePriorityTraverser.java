@@ -17,7 +17,9 @@ public class TriePriorityTraverser {
         ActivePriorityNode activePriorityNode = rootActiveNode.getBestNextActiveNode();
         ActivePriorityNode previousExhaustedActivePriorityNode = null;
 
+        int numberOfIterations = 0;
         while(activePriorityNode != null){
+            numberOfIterations++;
             System.out.println("inner iteration on " + character);
             if(activePriorityNode.isExhausted()){
                 activePriorityNode.getSuggestions(suggestions, NumberOfRequiredSuggestions - suggestions.size());
@@ -42,6 +44,8 @@ public class TriePriorityTraverser {
 
             activePriorityNode = activePriorityNode.getBestNextActiveNode();
         }
+
+        System.out.println("The number of iterations was: " + numberOfIterations);
 
         return suggestions;
     }

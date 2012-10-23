@@ -1,13 +1,5 @@
 package Query;
 
-/**
- * Created with IntelliJ IDEA.
- * Copywrite:   Sigurd Wien
- * User:        Sigurd
- * Date:        21.10.12
- * Time:        17:24
- * To change this template use File | Settings | File Templates.
- */
 public class ShortcutLink extends Link {
     private ActivePriorityNode source;
     private ActivePriorityNode destinationNode;

@@ -34,7 +34,6 @@ public class Trie<T> implements Comparable<Trie<T>> {
             }
 
             termFrequency++;
-            System.out.println("TermFrequency: " + termFrequency + ", Size: " + dataList.size());
             rank = (double)termFrequency / (double)dataList.size();
 
             addedTrie = this;
@@ -67,10 +66,6 @@ public class Trie<T> implements Comparable<Trie<T>> {
         return rankSortedChildren.get(index);
     }
 
-    public void printOrderedChildren(){
-        System.out.println("List of ranks: " + rankSortedChildren);
-    }
-
     public int getSize(){
         return rankSortedChildren.size();
     }
@@ -85,8 +80,6 @@ public class Trie<T> implements Comparable<Trie<T>> {
         if(suggestionCache.size() > cacheSize){
             suggestionCache.remove(cacheSize);
         }
-
-        System.out.println("SuggestionCache for node with label " + label + ", " + suggestionCache);
     }
 
     public ArrayList<T> search(String key ){

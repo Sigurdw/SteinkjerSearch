@@ -56,7 +56,6 @@ public class Indexer {
     private String removeSigns(String indexTerm) {
         char lastCharacter = indexTerm.charAt(indexTerm.length() - 1);
         if(!Character.isLetterOrDigit(lastCharacter)){
-            System.out.println("Removing sign from " + indexTerm);
             return indexTerm.substring(0, indexTerm.length() - 1);
         }
 
