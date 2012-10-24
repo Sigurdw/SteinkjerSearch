@@ -34,6 +34,10 @@ public class ActivePriorityNode {
         this.queryStringIndex = queryStringIndex;
         this.queryString = queryString;
         if(backlink != null){
+            if(isExhausted()){
+                backlink.setExhaused();
+            }
+
             backlink.setSource(this);
             linkQueue.add(backlink);
         }
@@ -69,7 +73,7 @@ public class ActivePriorityNode {
 
     private Link GetBestLink() {
         Link link = linkQueue.poll();
-        if(link != null && link instanceof BackLink && ignoreBackLink){
+        while(link != null && ((link instanceof BackLink && ignoreBackLink) || !link.isValid(queryString))){
             link = linkQueue.poll();
         }
 
@@ -202,6 +206,19 @@ public class ActivePriorityNode {
         return new ShortcutLink(getNextRank(), sourceOfShortcutLink, this);
     }
 
+    public SuggestionLink makeSuggestionLink(ActivePriorityNode sourceOfSuggestionLink){
+            return new SuggestionLink(getNextSuggestionRank(), queryString.GetLength(), sourceOfSuggestionLink, this);
+    }
+
+    private double getNextSuggestionRank() {
+        if(nextSuggestion < queryPosition.getCachedSuggestions().size()){
+            return getDiscountRank(queryPosition.getCachedSuggestions().get(nextSuggestion), previousEdits);
+        }
+        else{
+            return -2;
+        }
+    }
+
     private double getNextRank(){
         double rank = -2;
         Link nextLink = linkQueue.peek();
@@ -210,42 +227,5 @@ public class ActivePriorityNode {
         }
 
         return rank;
-        /*
-        if(!isExhausted()){
-            double bestEditNodeRank = -1;
-            Trie<IDocument> bestNode = null;
-            if(nextChild < queryPosition.getSize()){
-                bestNode = queryPosition.getOrderedChild(nextChild);
-            }
-
-            if(bestNode != null && bestNode == queryPosition.getChildren().get(getCharacter())){
-                bestNode = null;
-                nextChild++;
-                if(nextChild < queryPosition.getSize()){
-                    bestNode = queryPosition.getOrderedChild(nextChild);
-                }
-            }
-
-            if(bestNode != null){
-                bestEditNodeRank = getDiscountRank(bestNode, previousEdits + 1);
-            }
-
-            double bestForwardNodeRank = -1;
-            Link bestForwardLink = linkQueue.peek();
-            if(bestForwardLink != null){
-                bestForwardNodeRank = bestForwardLink.getRank();
-            }
-
-            return Math.max(bestEditNodeRank, bestForwardNodeRank);
-        }
-        else{
-            if(nextSuggestion < queryPosition.getSize()){
-                return getDiscountRank(queryPosition.getOrderedChild(nextSuggestion), previousEdits);
-            }
-            else{
-                return -1;
-            }
-        }
-        */
     }
 }

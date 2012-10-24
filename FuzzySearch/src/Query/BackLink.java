@@ -3,6 +3,7 @@ package Query;
 public class BackLink extends Link{
     private ActivePriorityNode source;
     private ActivePriorityNode destination;
+    private boolean isExhaused = false;
 
     public BackLink(double rank, ActivePriorityNode destination) {
         super(rank);
@@ -15,6 +16,10 @@ public class BackLink extends Link{
         this.destination = destination;
     }
 
+    public void setExhaused(){
+        isExhaused = true;
+    }
+
     public void setSource(ActivePriorityNode source){
         this.source = source;
     }
@@ -22,7 +27,14 @@ public class BackLink extends Link{
     @Override
     public ActivePriorityNode UseLink() {
         System.out.println("Using back link: " + this);
-        ForwardLink forwardLink = source.makeForwardLink(destination);
+        Link forwardLink;
+        if(isExhaused){
+            forwardLink = source.makeSuggestionLink(destination);
+        }
+        else {
+            forwardLink = source.makeForwardLink(destination);
+        }
+
         System.out.println("Making forward link: " + forwardLink.toString());
         destination.addLink(forwardLink);
         return destination;

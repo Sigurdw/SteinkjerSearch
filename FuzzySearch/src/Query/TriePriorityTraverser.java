@@ -2,6 +2,7 @@ package Query;
 
 import DataStructure.Trie;
 import DocumentModel.IDocument;
+
 import java.util.ArrayList;
 
 public class TriePriorityTraverser {
@@ -15,6 +16,7 @@ public class TriePriorityTraverser {
     public ArrayList<String> addCharacter(char character, int numberOfRequiredSuggestions){
         ActivePriorityNode activePriorityNode = rootActiveNode.getBestNextActiveNode();
         ActivePriorityNode previousExhaustedActivePriorityNode = null;
+        ArrayList<ActivePriorityNode> exhaustedNodes = new ArrayList<ActivePriorityNode>();
 
         ArrayList<Trie<IDocument>> suggestionNodes = new ArrayList<Trie<IDocument>>();
         int numberOfIterations = 0;
@@ -23,19 +25,7 @@ public class TriePriorityTraverser {
             System.out.println("inner iteration on " + character);
             if(activePriorityNode.isExhausted()){
                 activePriorityNode.getSuggestions(suggestionNodes, NumberOfRequiredSuggestions - suggestionNodes.size());
-                if(previousExhaustedActivePriorityNode != null){
-                    ShortcutLink shortcutLink = new ShortcutLink(
-                            activePriorityNode.getRank(),
-                            previousExhaustedActivePriorityNode,
-                            activePriorityNode);
-                    previousExhaustedActivePriorityNode.addLink(shortcutLink);
-                    previousExhaustedActivePriorityNode.ignoreBackLinks();
-                }
-                else{
-                    rootActiveNode = activePriorityNode;
-                }
-
-                previousExhaustedActivePriorityNode = activePriorityNode;
+                exhaustedNodes.add(activePriorityNode);
             }
 
             if(suggestionNodes.size() >= NumberOfRequiredSuggestions){
@@ -45,6 +35,9 @@ public class TriePriorityTraverser {
             activePriorityNode = activePriorityNode.getBestNextActiveNode();
         }
 
+        handleCacheStructure(exhaustedNodes);
+
+        System.out.println("The number of exhausted nodes was: " + exhaustedNodes.size());
         System.out.println("The number of iterations was: " + numberOfIterations);
 
         ArrayList<String> suggestions = new ArrayList<String>(numberOfRequiredSuggestions);
@@ -53,5 +46,24 @@ public class TriePriorityTraverser {
         }
 
         return suggestions;
+    }
+
+    private void handleCacheStructure(ArrayList<ActivePriorityNode> exhaustedNodes) {
+        for(int i = 1; i < exhaustedNodes.size(); i++){
+            ActivePriorityNode previouslyExhaustedNode = exhaustedNodes.get(i - 1);
+            ActivePriorityNode currentExhaustedNode = exhaustedNodes.get(i);
+
+            ShortcutLink shortcutLink = new ShortcutLink(
+                    currentExhaustedNode.getRank(),
+                    previouslyExhaustedNode,
+                    currentExhaustedNode);
+
+            previouslyExhaustedNode.addLink(shortcutLink);
+            previouslyExhaustedNode.ignoreBackLinks();
+        }
+
+        if(exhaustedNodes.size() > 0){
+            rootActiveNode = exhaustedNodes.get(0);
+        }
     }
 }

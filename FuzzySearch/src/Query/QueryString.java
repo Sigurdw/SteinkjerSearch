@@ -32,4 +32,8 @@ public class QueryString {
     public boolean IsExhausted(int queryStringIndex){
         return queryString.length() <= queryStringIndex || queryStringIndex < 0;
     }
+
+    public int GetLength(){
+        return queryString.length();
+    }
 }
