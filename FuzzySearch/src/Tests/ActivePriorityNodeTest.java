@@ -3,6 +3,7 @@ package Tests;
 import DataStructure.Trie;
 import DocumentModel.IDocument;
 import Query.ActivePriorityNode;
+import Query.EditOperation;
 import Query.QueryString;
 import org.junit.Test;
 
@@ -43,6 +44,34 @@ public class ActivePriorityNodeTest {
         ActivePriorityNode thirdNode = secondNode.getBestNextActiveNode();
 
         assert thirdNode == firstNode;
+    }
+
+
+    @Test
+    public void useEditBeforeBacklinkOnTieTest(){
+        TestDocument document = new TestDocument("TestDoc1", null, null);
+        root.addKeyDataPair("Test", document);
+
+        QueryString queryString = new QueryString();
+        ActivePriorityNode activeNode = new ActivePriorityNode(root, queryString);
+
+        queryString.SetQueryString("A");
+
+        activeNode = activeNode.getBestNextActiveNode();
+        assert activeNode.isExhausted();
+        assert activeNode.getLastOperation() == EditOperation.Delete;
+
+        activeNode = activeNode.getBestNextActiveNode();
+        assert !activeNode.isExhausted();
+        assert activeNode.getLastOperation() == EditOperation.Match;
+
+        activeNode = activeNode.getBestNextActiveNode();
+        assert !activeNode.isExhausted();
+        assert activeNode.getLastOperation() == EditOperation.Insert;
+
+        activeNode = activeNode.getBestNextActiveNode();
+        assert activeNode.isExhausted();
+        assert activeNode.getLastOperation() == EditOperation.Delete;
     }
 
     @Test

@@ -73,8 +73,24 @@ public class ActivePriorityNode {
 
     private Link GetBestLink() {
         Link link = linkQueue.poll();
+        link = maybeSwitch(link);
+
         while(link != null && ((link instanceof BackLink && ignoreBackLink) || !link.isValid(queryString))){
             link = linkQueue.poll();
+            link = maybeSwitch(link);
+        }
+
+        return link;
+    }
+
+    private Link maybeSwitch(Link link){
+        Link secondLink = linkQueue.peek();
+        if(link != null && secondLink != null){
+            if(link instanceof BackLink && link.getRank() == secondLink.getRank()){
+                linkQueue.poll();
+                linkQueue.add(link);
+                link = secondLink;
+            }
         }
 
         return link;
@@ -227,5 +243,9 @@ public class ActivePriorityNode {
         }
 
         return rank;
+    }
+
+    public EditOperation getLastOperation() {
+        return lastEditOperation;
     }
 }
