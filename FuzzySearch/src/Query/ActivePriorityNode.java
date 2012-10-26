@@ -86,7 +86,10 @@ public class ActivePriorityNode {
     private Link maybeSwitch(Link link){
         Link secondLink = linkQueue.peek();
         if(link != null && secondLink != null){
-            if(link instanceof BackLink && link.getRank() == secondLink.getRank()){
+            if(
+                    link instanceof BackLink &&
+                    link.getRank() == secondLink.getRank()&&
+                    !(secondLink instanceof ShortcutLink)){
                 linkQueue.poll();
                 linkQueue.add(link);
                 link = secondLink;
@@ -176,9 +179,11 @@ public class ActivePriorityNode {
 
             if(!suggestionNodes.contains(suggestionDocument)){
                 suggestionNodes.add(suggestionDocument);
+                numberOfUsedSuggestions++;
             }
-
-            numberOfUsedSuggestions++;
+            else{
+                nextSuggestion++;
+            }
         }
 
         nextSuggestion += numberOfUsedSuggestions;

@@ -7,7 +7,7 @@ import java.util.ArrayList;
 
 public class TriePriorityTraverser {
     private ActivePriorityNode rootActiveNode;
-    private final int NumberOfRequiredSuggestions = 10;
+    private final int NumberOfRequiredSuggestions = 4;
 
     public TriePriorityTraverser(Trie<IDocument> root, QueryString queryString){
         rootActiveNode = new ActivePriorityNode(root, queryString);
@@ -15,7 +15,6 @@ public class TriePriorityTraverser {
 
     public ArrayList<String> addCharacter(char character, int numberOfRequiredSuggestions){
         ActivePriorityNode activePriorityNode = rootActiveNode.getBestNextActiveNode();
-        ActivePriorityNode previousExhaustedActivePriorityNode = null;
         ArrayList<ActivePriorityNode> exhaustedNodes = new ArrayList<ActivePriorityNode>();
 
         ArrayList<Trie<IDocument>> suggestionNodes = new ArrayList<Trie<IDocument>>();
