@@ -26,7 +26,9 @@ public class TriePriorityTraverser {
             System.out.println("inner iteration on " + queryString.GetLastCharacter());
             if(activePriorityNode.isExhausted()){
                 activePriorityNode.getSuggestions(suggestionNodes, NumberOfRequiredSuggestions - suggestionNodes.size());
-                exhaustedNodes.add(activePriorityNode);
+                if(!exhaustedNodes.contains(activePriorityNode)){
+                    exhaustedNodes.add(activePriorityNode);
+                }
             }
 
             if(suggestionNodes.size() >= NumberOfRequiredSuggestions){
@@ -61,6 +63,7 @@ public class TriePriorityTraverser {
 
             previouslyExhaustedNode.addLink(shortcutLink);
             previouslyExhaustedNode.ignoreBackLinks();
+            System.out.println("Added shortcut " + shortcutLink);
         }
 
         if(exhaustedNodes.size() > 0){

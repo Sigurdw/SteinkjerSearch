@@ -5,14 +5,6 @@ import Query.ActiveQuery;
 
 import java.util.ArrayList;
 
-/**
- * Created with IntelliJ IDEA.
- * Copywrite:   Sigurd Wien
- * User:        Sigurd
- * Date:        29.09.12
- * Time:        15:01
- * To change this template use File | Settings | File Templates.
- */
 public class InteractiveSearchHandler{
 
     private ArrayList<ActiveQuery> activeQueries = new ArrayList<ActiveQuery>();
@@ -24,7 +16,6 @@ public class InteractiveSearchHandler{
 
 
     public InteractiveSearchHandler(Index index){
-        //activeQueries.add(index.initInteractiveSearch());
         this.index = index;
         query = index.initFastInteractiveSearch(queryString);
     }
@@ -59,12 +50,6 @@ public class InteractiveSearchHandler{
     }
 
     public ArrayList<String> getSearchResults() {
-        /*ArrayList<String> results = new ArrayList<String>();
-        for(Query.ActiveQuery activeQuery : activeQueries){
-            results.add(activeQuery.getLabel());
-        }
-
-        return results;*/
         return suggestions;
     }
 }
