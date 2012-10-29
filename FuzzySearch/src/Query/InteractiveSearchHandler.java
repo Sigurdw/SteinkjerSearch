@@ -30,47 +30,32 @@ public class InteractiveSearchHandler{
     }
 
 
-    private void addCharacter(String queryStr, char character){
-        System.out.println("Got: " + character);
-        //ArrayList<Query.ActiveQuery> nextActiveQueries = new ArrayList<Query.ActiveQuery>();
-        //for(Query.ActiveQuery activeQuery : activeQueries){
-        //    activeQuery.addCharacter(character, nextActiveQueries);
-        //}
-
-        /*System.out.println(
-                "Finished processing "
-                + activeQueries.size()
-                + " active queries. Now there are "
-                + nextActiveQueries.size() + " active queries.");*/
-
-        //for(Query.ActiveQuery nextActiveQuery : nextActiveQueries){
-        //    //System.out.println(nextActiveQuery);
-        //}
-
-        //activeQueries = nextActiveQueries;
+    private void addCharacter(String queryStr){
         queryString.SetQueryString(queryStr);
-        suggestions = query.addCharacter(character, 1);
-        System.out.println(suggestions);
+        char lastCharacter = queryString.GetLastCharacter();
+        if(lastCharacter != 0){
+            System.out.println("Got: " + lastCharacter);
+            suggestions = query.addCharacter();
+            System.out.println(suggestions);
+        }
+        else{
+            suggestions = new ArrayList<String>();
+        }
     }
 
     public void handleUserInput(String queryString){
-        if(queryString.startsWith(activeQueryString)){
-            for(int i = activeQueryString.length(); i < queryString.length(); i++){
-                char queryCharacter = queryString.charAt(i);
-                System.out.println("adding char");
-                addCharacter(queryString, queryCharacter);
+        if(!queryString.equals(activeQueryString)){
+            if(queryString.startsWith(activeQueryString)){
+                addCharacter(queryString);
             }
-        }
-        else{
-            query = index.initFastInteractiveSearch(this.queryString);
-            activeQueries.add(index.initInteractiveSearch());
-            for(int i = 0; i < queryString.length(); i++){
-                char queryCharacter = queryString.charAt(i);
-                addCharacter(queryString, queryCharacter);
+            else{
+                query = index.initFastInteractiveSearch(this.queryString);
+                activeQueries.add(index.initInteractiveSearch());
+                addCharacter(queryString);
             }
-        }
 
-        activeQueryString = queryString;
+            activeQueryString = queryString;
+        }
     }
 
     public ArrayList<String> getSearchResults() {

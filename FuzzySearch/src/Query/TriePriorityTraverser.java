@@ -8,12 +8,14 @@ import java.util.ArrayList;
 public class TriePriorityTraverser {
     private ActivePriorityNode rootActiveNode;
     private final int NumberOfRequiredSuggestions = 4;
+    private QueryString queryString;
 
     public TriePriorityTraverser(Trie<IDocument> root, QueryString queryString){
+        this.queryString = queryString;
         rootActiveNode = new ActivePriorityNode(root, queryString);
     }
 
-    public ArrayList<String> addCharacter(char character, int numberOfRequiredSuggestions){
+    public ArrayList<String> addCharacter(){
         ActivePriorityNode activePriorityNode = rootActiveNode.getBestNextActiveNode();
         ArrayList<ActivePriorityNode> exhaustedNodes = new ArrayList<ActivePriorityNode>();
 
@@ -21,7 +23,7 @@ public class TriePriorityTraverser {
         int numberOfIterations = 0;
         while(activePriorityNode != null){
             numberOfIterations++;
-            System.out.println("inner iteration on " + character);
+            System.out.println("inner iteration on " + queryString.GetLastCharacter());
             if(activePriorityNode.isExhausted()){
                 activePriorityNode.getSuggestions(suggestionNodes, NumberOfRequiredSuggestions - suggestionNodes.size());
                 exhaustedNodes.add(activePriorityNode);
@@ -39,7 +41,7 @@ public class TriePriorityTraverser {
         System.out.println("The number of exhausted nodes was: " + exhaustedNodes.size());
         System.out.println("The number of iterations was: " + numberOfIterations);
 
-        ArrayList<String> suggestions = new ArrayList<String>(numberOfRequiredSuggestions);
+        ArrayList<String> suggestions = new ArrayList<String>();
         for(Trie<IDocument> suggestionNode : suggestionNodes){
             suggestions.add(suggestionNode.getLabel());
         }

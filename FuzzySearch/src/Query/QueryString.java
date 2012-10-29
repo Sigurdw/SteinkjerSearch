@@ -36,4 +36,13 @@ public class QueryString {
     public int GetLength(){
         return queryString.length();
     }
+
+    public char GetLastCharacter(){
+        char lastCharacter = 0;
+        if(queryString.length() > 0){
+            lastCharacter = queryString.charAt(queryString.length() - 1);
+        }
+
+        return lastCharacter;
+    }
 }

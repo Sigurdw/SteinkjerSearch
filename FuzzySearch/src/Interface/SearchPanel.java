@@ -33,13 +33,13 @@ public class SearchPanel extends JPanel {
                 handleUserInput(queryString);
             }
         });
-        searchField.addActionListener(new ActionListener() {
+        /*searchField.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
-                searchField.setText("");
-                handleUserInput("");
+                String queryString = searchField.getText();
+                handleUserInput(queryString);
             }
-        });
+        });*/
 
         add(searchField);
         resultArea.setEditable(false);
