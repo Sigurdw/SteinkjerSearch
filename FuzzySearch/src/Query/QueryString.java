@@ -1,12 +1,5 @@
 package Query;
 
-/**
- * Created with IntelliJ IDEA.
- * User: t-swien
- * Date: 10/18/12
- * Time: 11:54 AM
- * To change this template use File | Settings | File Templates.
- */
 public class QueryString {
     private String queryString;
 

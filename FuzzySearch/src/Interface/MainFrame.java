@@ -1,6 +1,5 @@
 package Interface;
 
-import DocumentModel.Document;
 import DocumentModel.IDocument;
 import Index.Index;
 import Index.Indexer;
@@ -10,14 +9,6 @@ import Query.InteractiveSearchHandler;
 import javax.swing.*;
 import java.util.ArrayList;
 
-/**
- * Created with IntelliJ IDEA.
- * Copywrite:   Sigurd Wien
- * User:        Sigurd
- * Date:        30.09.12
- * Time:        09:42
- * To change this template use File | Settings | File Templates.
- */
 public class MainFrame extends JFrame {
 
     private static final int width = 800;

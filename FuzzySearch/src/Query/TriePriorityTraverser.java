@@ -25,9 +25,12 @@ public class TriePriorityTraverser {
             numberOfIterations++;
             System.out.println("inner iteration on " + queryString.GetLastCharacter());
             if(activePriorityNode.isExhausted()){
-                activePriorityNode.getSuggestions(suggestionNodes, NumberOfRequiredSuggestions - suggestionNodes.size());
+                int suggestionsNeeded = NumberOfRequiredSuggestions - suggestionNodes.size();
+                activePriorityNode.getSuggestions(suggestionNodes, suggestionsNeeded);
+
                 if(!exhaustedNodes.contains(activePriorityNode)){
                     exhaustedNodes.add(activePriorityNode);
+                    System.out.println("Will not add node to cache.");
                 }
             }
 

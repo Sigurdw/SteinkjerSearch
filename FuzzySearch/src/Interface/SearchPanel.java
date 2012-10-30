@@ -9,14 +9,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
-/**
- * Created with IntelliJ IDEA.
- * Copywrite:   Sigurd Wien
- * User:        Sigurd
- * Date:        30.09.12
- * Time:        09:50
- * To change this template use File | Settings | File Templates.
- */
 public class SearchPanel extends JPanel {
 
     JTextField searchField = new JTextField(50);
@@ -33,13 +25,6 @@ public class SearchPanel extends JPanel {
                 handleUserInput(queryString);
             }
         });
-        /*searchField.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent e) {
-                String queryString = searchField.getText();
-                handleUserInput(queryString);
-            }
-        });*/
 
         add(searchField);
         resultArea.setEditable(false);

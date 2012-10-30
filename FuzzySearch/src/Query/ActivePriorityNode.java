@@ -18,6 +18,7 @@ public class ActivePriorityNode {
     private QueryString queryString;
 
     private PriorityQueue<Link> linkQueue = new PriorityQueue<Link>();
+    private boolean perserveLink = false;
 
     ActivePriorityNode(
             Trie<IDocument> queryPosition,
@@ -110,7 +111,7 @@ public class ActivePriorityNode {
 
     private void AddMatchToList(){
         if(EditOperation.isOperationAllowed(lastEditOperation, EditOperation.Match)){
-            Trie<IDocument> match = queryPosition.getChildren().get(getCharacter());
+            Trie<IDocument> match = getMatch();
             System.out.println(match);
             if(match != null){
                 double rank = getDiscountRank(match, previousEdits);
@@ -121,13 +122,22 @@ public class ActivePriorityNode {
 
     private void AddDeleteToList(){
         System.out.println("Adding delete");
-        if(EditOperation.isOperationAllowed(lastEditOperation, EditOperation.Delete)){
+        if(canDelete()){
             System.out.println("Adding delete2");
             int cost = EditOperation.getOperationCost(lastEditOperation, EditOperation.Delete);
             double deleteRank = getDiscountRank(queryPosition, previousEdits + cost);
             Link deleteLink = new EditLink(deleteRank, this, queryPosition, EditOperation.Delete);
             linkQueue.add(deleteLink);
         }
+    }
+
+    private boolean canDelete(){
+        return EditOperation.isOperationAllowed(lastEditOperation, EditOperation.Delete)
+                    && (getMatch() != null || lastEditOperation == EditOperation.Insert);
+    }
+
+    private Trie<IDocument> getMatch(){
+        return queryPosition.getChildren().get(getCharacter());
     }
 
     private void AddNextEditsToList() {
@@ -227,8 +237,20 @@ public class ActivePriorityNode {
         return new ShortcutLink(getNextRank(), sourceOfShortcutLink, this);
     }
 
-    public SuggestionLink makeSuggestionLink(ActivePriorityNode sourceOfSuggestionLink){
-            return new SuggestionLink(getNextSuggestionRank(), queryString.GetLength(), sourceOfSuggestionLink, this);
+    public Link makeSuggestionLink(ActivePriorityNode sourceOfSuggestionLink){
+        Link forwardLink;
+        if(perserveLink){
+            forwardLink = new ForwardLink(getRank(), sourceOfSuggestionLink, this);
+        }
+        else{
+            forwardLink = new SuggestionLink(
+                    getNextSuggestionRank(),
+                    queryString.GetLength(),
+                    sourceOfSuggestionLink,
+                    this);
+        }
+
+        return forwardLink;
     }
 
     private double getNextSuggestionRank() {
@@ -252,5 +274,9 @@ public class ActivePriorityNode {
 
     public EditOperation getLastOperation() {
         return lastEditOperation;
+    }
+
+    public void perserveLink(){
+        perserveLink = true;
     }
 }
