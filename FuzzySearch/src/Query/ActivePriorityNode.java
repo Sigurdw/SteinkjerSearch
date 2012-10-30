@@ -121,9 +121,8 @@ public class ActivePriorityNode {
     }
 
     private void AddDeleteToList(){
-        System.out.println("Adding delete");
         if(canDelete()){
-            System.out.println("Adding delete2");
+            System.out.println("Adding delete link to: " + this);
             int cost = EditOperation.getOperationCost(lastEditOperation, EditOperation.Delete);
             double deleteRank = getDiscountRank(queryPosition, previousEdits + cost);
             Link deleteLink = new EditLink(deleteRank, this, queryPosition, EditOperation.Delete);
@@ -132,8 +131,10 @@ public class ActivePriorityNode {
     }
 
     private boolean canDelete(){
+        System.out.println("Last edit: " + lastEditOperation);
+        System.out.println("Had match: " + (getMatch() != null) );
         return EditOperation.isOperationAllowed(lastEditOperation, EditOperation.Delete)
-                    && (getMatch() != null || lastEditOperation == EditOperation.Insert);
+                    && (getMatch() == null || lastEditOperation == EditOperation.Insert);
     }
 
     private Trie<IDocument> getMatch(){
