@@ -85,7 +85,7 @@
             <file leaf-file-name="ActivePriorityNode.java" pinned="false" current="false" current-in-tab="true">
               <entry file="file://$PROJECT_DIR$/src/Query/ActivePriorityNode.java">
                 <provider selected="true" editor-type-id="text-editor">
-                  <state line="140" column="14" selection-start="4381" selection-end="4381" vertical-scroll-proportion="0.73137695">
+                  <state line="232" column="8" selection-start="8088" selection-end="8088" vertical-scroll-proportion="0.59706545">
                     <folding />
                   </state>
                 </provider>
@@ -111,7 +111,7 @@
             <file leaf-file-name="TriePriorityTraverser.java" pinned="false" current="false" current-in-tab="true">
               <entry file="file://$PROJECT_DIR$/src/Query/TriePriorityTraverser.java">
                 <provider selected="true" editor-type-id="text-editor">
-                  <state line="9" column="53" selection-start="242" selection-end="242" vertical-scroll-proportion="0.1134594">
+                  <state line="39" column="62" selection-start="1562" selection-end="1562" vertical-scroll-proportion="0.6354402">
                     <folding />
                   </state>
                 </provider>
@@ -889,14 +889,14 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/Query/TriePriorityTraverser.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="9" column="53" selection-start="242" selection-end="242" vertical-scroll-proportion="0.1134594">
+        <state line="39" column="62" selection-start="1562" selection-end="1562" vertical-scroll-proportion="0.6354402">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/Query/ActivePriorityNode.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="140" column="14" selection-start="4381" selection-end="4381" vertical-scroll-proportion="0.73137695">
+        <state line="232" column="8" selection-start="8088" selection-end="8088" vertical-scroll-proportion="0.59706545">
           <folding />
         </state>
       </provider>

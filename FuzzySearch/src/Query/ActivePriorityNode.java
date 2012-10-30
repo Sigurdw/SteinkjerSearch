@@ -194,22 +194,27 @@ public class ActivePriorityNode {
         ArrayList<Trie<IDocument>> suggestions = queryPosition.getCachedSuggestions();
         for (int i = nextSuggestion; i < Math.min(nextSuggestion + neededSuggestions, suggestions.size()); i++){
             Trie<IDocument> suggestionDocument = suggestions.get(i);
-            if(linkQueue.peek().getRank() > getDiscountRank(suggestionDocument, 1)){
-            break;
+            double suggestionRank = getDiscountRank(suggestionDocument, 1);
+            System.out.println("Evaluating suggestion: " + suggestionDocument.getLabel());
+            System.out.println("Original rank: " + suggestionDocument.getRank());
+            System.out.println("Suggestion rank: " + suggestionRank);
+            System.out.println("Threshold: " + linkQueue.peek().getRank());
+            if(linkQueue.peek().getRank() > suggestionRank){
+                break;
+            }
+
+            if(!suggestionNodes.contains(suggestionDocument)){
+                suggestionNodes.add(suggestionDocument);
+                numberOfUsedSuggestions++;
+            }
+            else{
+                nextSuggestion++;
+            }
         }
 
-        if(!suggestionNodes.contains(suggestionDocument)){
-            suggestionNodes.add(suggestionDocument);
-            numberOfUsedSuggestions++;
-        }
-        else{
-            nextSuggestion++;
-        }
+        nextSuggestion += numberOfUsedSuggestions;
+        System.out.println("Got these: " + suggestionNodes);
     }
-
-    nextSuggestion += numberOfUsedSuggestions;
-    System.out.println("Got these: " + suggestionNodes);
-}
 
     public double getRank() {
         return getDiscountRank(queryPosition, 1);
@@ -222,6 +227,10 @@ public class ActivePriorityNode {
     public ActivePriorityNode createChild(Trie<IDocument> position, EditOperation editOperation) {
         int cost = EditOperation.getOperationCost(lastEditOperation, editOperation);
         double childEditDiscount = editDiscount * EditOperation.getOperationDiscount(editOperation);
+        if(editOperation == EditOperation.Delete && lastEditOperation == EditOperation.Insert){
+            childEditDiscount = editDiscount;
+        }
+
         int movement = EditOperation.getOperationMovement(editOperation);
         if(editOperation == EditOperation.Insert){
             AddNextEditsToList();
