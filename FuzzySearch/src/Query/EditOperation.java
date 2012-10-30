@@ -81,4 +81,25 @@ public enum EditOperation {
 
         return movement;
     }
+
+    public static double getOperationDiscount(EditOperation editOperation) {
+        double discount = -1;
+
+        switch (editOperation){
+            case Insert:
+                discount = 0.5;
+                break;
+            case Delete:
+                discount = 0.5;
+                break;
+            case Match:
+                discount = 1;
+                break;
+            case Substitution:
+                discount = 0.5;
+                break;
+        }
+
+        return discount;
+    }
 }
