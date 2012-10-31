@@ -7,6 +7,8 @@ import Query.EditOperation;
 import Query.QueryString;
 import org.junit.Test;
 
+import java.util.ArrayList;
+
 public class ActivePriorityNodeTest {
     Trie<IDocument> root = new Trie<IDocument>();
 
@@ -72,6 +74,57 @@ public class ActivePriorityNodeTest {
         activeNode = activeNode.getBestNextActiveNode();
         assert activeNode.isExhausted();
         assert activeNode.getLastOperation() == EditOperation.Delete;
+    }
+
+    @Test
+    public void rankHandlingTest() throws Exception {
+        QueryString queryString = new QueryString();
+        TestDocument doc1 = new TestDocument("TestDoc1", null, null);
+        root.addKeyDataPair("aa", doc1);
+        root.addKeyDataPair("aa", doc1);
+        root.addKeyDataPair("aa", doc1);
+
+        root.addKeyDataPair("ba", doc1);
+        root.addKeyDataPair("ba", doc1);
+
+        root.addKeyDataPair("bb", doc1);
+        root.addKeyDataPair("ab", doc1);
+
+        ActivePriorityNode activeNode = new ActivePriorityNode(root, queryString);
+
+        queryString.SetQueryString("b");
+
+        activeNode = activeNode.getBestNextActiveNode();
+
+        ArrayList<Trie<IDocument>> suggestions = new ArrayList<Trie<IDocument>>();
+        activeNode.getSuggestions(suggestions, 3);
+
+        assert  suggestions.size() == 1;
+        assert suggestions.get(0).getLabel().equals("ba");
+
+        activeNode = activeNode.getBestNextActiveNode();
+        activeNode = activeNode.getBestNextActiveNode();
+        activeNode = activeNode.getBestNextActiveNode();
+        activeNode.getSuggestions(suggestions, 3);
+
+        assert  suggestions.size() == 2;
+        assert suggestions.get(1).getLabel().equals("aa");
+
+        activeNode = activeNode.getBestNextActiveNode();
+        activeNode = activeNode.getBestNextActiveNode();
+        activeNode = activeNode.getBestNextActiveNode();
+
+        assert activeNode.getLabel().equals("b");
+
+        activeNode.getSuggestions(suggestions, 3);
+
+        assert suggestions.size() == 3;
+        assert suggestions.get(2).getLabel().equals("bb");
+    }
+
+    @Test
+    public void cacheStructureTest(){
+
     }
 
     @Test
