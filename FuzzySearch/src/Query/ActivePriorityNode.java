@@ -17,6 +17,7 @@ public class ActivePriorityNode {
     private int nextSuggestion = 0;
     private QueryString queryString;
     private double editDiscount;
+    private boolean isSubstitution;
 
     private PriorityQueue<Link> linkQueue = new PriorityQueue<Link>();
     private boolean perserveLink = false;
@@ -28,7 +29,8 @@ public class ActivePriorityNode {
             BackLink backlink,
             int queryStringIndex,
             QueryString queryString,
-            double editDiscount
+            double editDiscount,
+            boolean isSubstitution
     )
     {
         this.queryPosition = queryPosition;
@@ -37,6 +39,7 @@ public class ActivePriorityNode {
         this.queryStringIndex = queryStringIndex;
         this.queryString = queryString;
         this.editDiscount = editDiscount;
+        this.isSubstitution = isSubstitution;
         if(backlink != null){
             if(isExhausted()){
                 backlink.setExhaused();
@@ -48,7 +51,7 @@ public class ActivePriorityNode {
     }
 
     public ActivePriorityNode(Trie<IDocument> rootNode, QueryString queryString){
-        this(rootNode, 0, EditOperation.Match, null, 0, queryString, 1);
+        this(rootNode, 0, EditOperation.Match, null, 0, queryString, 1, false);
     }
 
     public String toString(){
@@ -149,7 +152,7 @@ public class ActivePriorityNode {
     }
 
     private void AddNextEditsToList() {
-        if(EditOperation.isOperationAllowed(lastEditOperation, EditOperation.Insert)){
+        if(EditOperation.isOperationAllowed(lastEditOperation, EditOperation.Insert) || isSubstitution){
             Trie<IDocument> bestEditNode = getNextEditNode();
             if(bestEditNode != null){
                 double rank = getDiscountRank(
@@ -227,8 +230,10 @@ public class ActivePriorityNode {
     public ActivePriorityNode createChild(Trie<IDocument> position, EditOperation editOperation) {
         int cost = EditOperation.getOperationCost(lastEditOperation, editOperation);
         double childEditDiscount = editDiscount * EditOperation.getOperationDiscount(editOperation);
-        if(editOperation == EditOperation.Delete && lastEditOperation == EditOperation.Insert){
+        boolean isSubstitution = editOperation == EditOperation.Delete && lastEditOperation == EditOperation.Insert;
+        if(isSubstitution){
             childEditDiscount = editDiscount;
+
         }
 
         int movement = EditOperation.getOperationMovement(editOperation);
@@ -244,7 +249,8 @@ public class ActivePriorityNode {
                 backlink,
                 queryStringIndex + movement,
                 queryString,
-                childEditDiscount
+                childEditDiscount,
+                isSubstitution
                 );
     }
 
