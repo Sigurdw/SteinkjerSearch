@@ -97,6 +97,11 @@ public class ActivePriorityNode {
                 linkQueue.add(link);
                 link = secondLink;
             }
+            else if( link.getRank() == secondLink.getRank() && secondLink instanceof MatchLink){
+                linkQueue.poll();
+                linkQueue.add(link);
+                link = secondLink;
+            }
         }
 
         return link;
