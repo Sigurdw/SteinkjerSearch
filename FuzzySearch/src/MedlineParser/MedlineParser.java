@@ -15,7 +15,7 @@ public class MedlineParser {
             File file = new File(Path);
             Scanner scanner = new Scanner(file);
             scanner.useDelimiter("#NEW RECORD\n");
-            int counter = 1000;
+            int counter = 20000;
             while (scanner.hasNext() && counter > 0){
 
                 String document = scanner.next();

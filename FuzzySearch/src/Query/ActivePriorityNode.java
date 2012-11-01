@@ -41,10 +41,6 @@ public class ActivePriorityNode {
         this.editDiscount = editDiscount;
         this.isSubstitution = isSubstitution;
         if(backlink != null){
-            if(isExhausted()){
-                backlink.setExhaused();
-            }
-
             backlink.setSource(this);
             linkQueue.add(backlink);
         }
@@ -144,7 +140,8 @@ public class ActivePriorityNode {
 
     private boolean canDelete(){
         return EditOperation.isOperationAllowed(lastEditOperation, EditOperation.Delete)
-                    && (getMatch() == null || lastEditOperation == EditOperation.Insert);
+                    && (!(getMatch() != null && queryPosition.getSize() == 1)
+                        || lastEditOperation == EditOperation.Insert);
     }
 
     private Trie<IDocument> getMatch(){
@@ -193,15 +190,10 @@ public class ActivePriorityNode {
 
     public void getSuggestions(ArrayList<Trie<IDocument>> suggestionNodes, int neededSuggestions){
         int numberOfUsedSuggestions = 0;
-        System.out.println("Getting suggestions, need: " + neededSuggestions);
         ArrayList<Trie<IDocument>> suggestions = queryPosition.getCachedSuggestions();
         for (int i = nextSuggestion; i < Math.min(nextSuggestion + neededSuggestions, suggestions.size()); i++){
             Trie<IDocument> suggestionDocument = suggestions.get(i);
             double suggestionRank = getDiscountRank(suggestionDocument, 1);
-            System.out.println("Evaluating suggestion: " + suggestionDocument.getLabel());
-            System.out.println("Original rank: " + suggestionDocument.getRank());
-            System.out.println("Suggestion rank: " + suggestionRank);
-            System.out.println("Threshold: " + linkQueue.peek().getRank());
             if(linkQueue.peek().getRank() > suggestionRank){
                 break;
             }

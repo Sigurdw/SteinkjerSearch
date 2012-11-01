@@ -13,7 +13,7 @@ public class MainFrame extends JFrame {
 
     private static final int width = 800;
     private static final int height = 600;
-    private static final String directoryPath = "C:/TextCollection";
+    private static final String directoryPath = "D:/TextCollection";
 
     public MainFrame(){
         setSize(width, height);

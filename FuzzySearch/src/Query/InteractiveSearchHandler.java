@@ -36,14 +36,14 @@ public class InteractiveSearchHandler{
 
     public void handleUserInput(String queryString){
         if(!queryString.equals(activeQueryString)){
-            /*if(queryString.startsWith(activeQueryString)){
+            if(queryString.startsWith(activeQueryString)){
                 addCharacter(queryString);
             }
-            else{*/
+            else{
                 query = index.initFastInteractiveSearch(this.queryString);
                 activeQueries.add(index.initInteractiveSearch());
                 addCharacter(queryString);
-            //}
+            }
 
             activeQueryString = queryString;
         }
