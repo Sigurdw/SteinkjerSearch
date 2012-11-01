@@ -8,11 +8,14 @@ import java.util.List;
 
 public class Indexer {
 
+    public static int NumberOfDocuments = 0;
+
     public Indexer(){
 
     }
 
     public Index indexDocuments(ArrayList<IDocument> documents){
+        NumberOfDocuments = documents.size();
         Trie<IDocument> indexImplementation = new Trie<IDocument>();
         for(IDocument document : documents){
             List<String> tokens = document.getTokens();

@@ -1,5 +1,7 @@
 package DataStructure;
 
+import Index.Indexer;
+
 import java.util.*;
 
 public class Trie<T> implements Comparable<Trie<T>> {

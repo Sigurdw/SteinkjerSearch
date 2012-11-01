@@ -5,13 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 
-/**
- * Created with IntelliJ IDEA.
- * User: Sigurd
- * Date: 23.09.12
- * Time: 19:17
- * To change this template use File | Settings | File Templates.
- */
 public class Document implements IDocument {
     private File documentFile;
 
