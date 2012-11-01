@@ -2,7 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="880ba94e-1fa8-4a4e-8b06-903459ba66f9" name="Default" comment="">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/Interface/MainFrame.java" afterPath="$PROJECT_DIR$/src/Interface/MainFrame.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/Query/ActivePriorityNode.java" afterPath="$PROJECT_DIR$/src/Query/ActivePriorityNode.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/Query/InteractiveSearchHandler.java" afterPath="$PROJECT_DIR$/src/Query/InteractiveSearchHandler.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/Tests/TriePriorityTraverserTest.java" afterPath="$PROJECT_DIR$/src/Tests/TriePriorityTraverserTest.java" />
     </list>
     <ignored path="FuzzySearch.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -77,19 +80,19 @@
       <content type="file-editors">
         <state>
           <leaf>
-            <file leaf-file-name="TriePriorityTraverser.java" pinned="false" current="false" current-in-tab="true">
+            <file leaf-file-name="TriePriorityTraverser.java" pinned="false" current="false" current-in-tab="false">
               <entry file="file://$PROJECT_DIR$/src/Query/TriePriorityTraverser.java">
                 <provider selected="true" editor-type-id="text-editor">
-                  <state line="25" column="41" selection-start="515" selection-end="945" vertical-scroll-proportion="0.452237">
+                  <state line="29" column="122" selection-start="1223" selection-end="1223" vertical-scroll-proportion="0.0">
                     <folding />
                   </state>
                 </provider>
               </entry>
             </file>
-            <file leaf-file-name="TriePriorityTraverserTest.java" pinned="false" current="false" current-in-tab="false">
+            <file leaf-file-name="TriePriorityTraverserTest.java" pinned="false" current="false" current-in-tab="true">
               <entry file="file://$PROJECT_DIR$/src/Tests/TriePriorityTraverserTest.java">
                 <provider selected="true" editor-type-id="text-editor">
-                  <state line="16" column="27" selection-start="329" selection-end="329" vertical-scroll-proportion="0.0">
+                  <state line="46" column="42" selection-start="1450" selection-end="1450" vertical-scroll-proportion="0.38883632">
                     <folding>
                       <element signature="imports" expanded="true" />
                     </folding>
@@ -108,7 +111,7 @@
             <file leaf-file-name="ActivePriorityNode.java" pinned="false" current="false" current-in-tab="true">
               <entry file="file://$PROJECT_DIR$/src/Query/ActivePriorityNode.java">
                 <provider selected="true" editor-type-id="text-editor">
-                  <state line="154" column="102" selection-start="4979" selection-end="4979" vertical-scroll-proportion="0.38573155">
+                  <state line="154" column="102" selection-start="4979" selection-end="4979" vertical-scroll-proportion="0.30179754">
                     <folding />
                   </state>
                 </provider>
@@ -171,10 +174,10 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="ActivePriorityNodeTest.java" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="ActivePriorityNodeTest.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/Tests/ActivePriorityNodeTest.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="16" column="66" selection-start="433" selection-end="433" vertical-scroll-proportion="0.19642857">
+            <state line="16" column="66" selection-start="433" selection-end="433" vertical-scroll-proportion="0.0">
               <folding>
                 <element signature="e#3291#3308#0" expanded="true" />
               </folding>
@@ -182,10 +185,10 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="MainFrame.java" pinned="false" current="false" current-in-tab="false">
+      <file leaf-file-name="MainFrame.java" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/Interface/MainFrame.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="15" column="45" selection-start="378" selection-end="378" vertical-scroll-proportion="0.0">
+            <state line="15" column="50" selection-start="383" selection-end="383" vertical-scroll-proportion="0.16452992">
               <folding />
             </state>
           </provider>
@@ -203,7 +206,7 @@
       <file leaf-file-name="InteractiveSearchHandler.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/Query/InteractiveSearchHandler.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="18" column="28" selection-start="527" selection-end="527" vertical-scroll-proportion="0.0">
+            <state line="18" column="24" selection-start="524" selection-end="524" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -246,17 +249,17 @@
         <option value="$PROJECT_DIR$/src/Query/Link.java" />
         <option value="$PROJECT_DIR$/src/Query/BackLink.java" />
         <option value="$PROJECT_DIR$/src/Query/SuggestionLink.java" />
-        <option value="$PROJECT_DIR$/src/Query/InteractiveSearchHandler.java" />
         <option value="$PROJECT_DIR$/src/Query/QueryString.java" />
         <option value="$PROJECT_DIR$/src/Interface/SearchPanel.java" />
-        <option value="$PROJECT_DIR$/src/Interface/MainFrame.java" />
         <option value="$PROJECT_DIR$/src/Query/EditOperation.java" />
         <option value="$PROJECT_DIR$/src/Query/TriePriorityTraverser.java" />
         <option value="$PROJECT_DIR$/src/Index/Indexer.java" />
         <option value="$PROJECT_DIR$/src/MedlineParser/MedlineParser.java" />
         <option value="$PROJECT_DIR$/src/Tests/ActivePriorityNodeTest.java" />
-        <option value="$PROJECT_DIR$/src/Tests/TriePriorityTraverserTest.java" />
         <option value="$PROJECT_DIR$/src/Query/ActivePriorityNode.java" />
+        <option value="$PROJECT_DIR$/src/Tests/TriePriorityTraverserTest.java" />
+        <option value="$PROJECT_DIR$/src/Query/InteractiveSearchHandler.java" />
+        <option value="$PROJECT_DIR$/src/Interface/MainFrame.java" />
       </list>
     </option>
   </component>
@@ -266,8 +269,8 @@
   <component name="ProjectFrameBounds">
     <option name="x" value="-8" />
     <option name="y" value="-8" />
-    <option name="width" value="1552" />
-    <option name="height" value="938" />
+    <option name="width" value="1936" />
+    <option name="height" value="1168" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true">
     <OptionsSetting value="true" id="Add" />
@@ -480,28 +483,6 @@
     </key>
   </component>
   <component name="RunManager" selected="Application.Main">
-    <configuration default="false" name="ActivePriorityNodeTest.useEditBeforeBacklinkOnTieTest" type="JUnit" factoryName="JUnit" temporary="true">
-      <module name="FuzzySearch" />
-      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
-      <option name="ALTERNATIVE_JRE_PATH" />
-      <option name="PACKAGE_NAME" value="Tests" />
-      <option name="MAIN_CLASS_NAME" value="Tests.ActivePriorityNodeTest" />
-      <option name="METHOD_NAME" value="useEditBeforeBacklinkOnTieTest" />
-      <option name="TEST_OBJECT" value="method" />
-      <option name="VM_PARAMETERS" value="-ea" />
-      <option name="PARAMETERS" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="ENV_VARIABLES" />
-      <option name="PASS_PARENT_ENVS" value="true" />
-      <option name="TEST_SEARCH_SCOPE">
-        <value defaultName="moduleWithDependencies" />
-      </option>
-      <envs />
-      <patterns />
-      <RunnerSettings RunnerId="Run" />
-      <ConfigurationWrapper RunnerId="Run" />
-      <method />
-    </configuration>
     <configuration default="false" name="Main" type="Application" factoryName="Application" temporary="true">
       <option name="MAIN_CLASS_NAME" value="Interface.Main" />
       <option name="VM_PARAMETERS" value="" />
@@ -563,6 +544,28 @@
       <option name="PACKAGE_NAME" value="Tests" />
       <option name="MAIN_CLASS_NAME" value="Tests.TriePriorityTraverserTest" />
       <option name="METHOD_NAME" value="testAddCharacter" />
+      <option name="TEST_OBJECT" value="method" />
+      <option name="VM_PARAMETERS" value="-ea" />
+      <option name="PARAMETERS" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <option name="TEST_SEARCH_SCOPE">
+        <value defaultName="moduleWithDependencies" />
+      </option>
+      <envs />
+      <patterns />
+      <RunnerSettings RunnerId="Run" />
+      <ConfigurationWrapper RunnerId="Run" />
+      <method />
+    </configuration>
+    <configuration default="false" name="TriePriorityTraverserTest.testAddCharacterWithSkewedIndex" type="JUnit" factoryName="JUnit" temporary="true">
+      <module name="FuzzySearch" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="PACKAGE_NAME" value="Tests" />
+      <option name="MAIN_CLASS_NAME" value="Tests.TriePriorityTraverserTest" />
+      <option name="METHOD_NAME" value="testAddCharacterWithSkewedIndex" />
       <option name="TEST_OBJECT" value="method" />
       <option name="VM_PARAMETERS" value="-ea" />
       <option name="PARAMETERS" />
@@ -696,11 +699,11 @@
       </method>
     </configuration>
     <list size="5">
-      <item index="0" class="java.lang.String" itemvalue="JUnit.ActivePriorityNodeTest.useEditBeforeBacklinkOnTieTest" />
-      <item index="1" class="java.lang.String" itemvalue="Application.Main" />
-      <item index="2" class="java.lang.String" itemvalue="Application.MedlineParser" />
-      <item index="3" class="java.lang.String" itemvalue="JUnit.ActivePriorityNodeTest.rankHandlingTest" />
-      <item index="4" class="java.lang.String" itemvalue="JUnit.TriePriorityTraverserTest.testAddCharacter" />
+      <item index="0" class="java.lang.String" itemvalue="Application.Main" />
+      <item index="1" class="java.lang.String" itemvalue="Application.MedlineParser" />
+      <item index="2" class="java.lang.String" itemvalue="JUnit.ActivePriorityNodeTest.rankHandlingTest" />
+      <item index="3" class="java.lang.String" itemvalue="JUnit.TriePriorityTraverserTest.testAddCharacter" />
+      <item index="4" class="java.lang.String" itemvalue="JUnit.TriePriorityTraverserTest.testAddCharacterWithSkewedIndex" />
     </list>
     <configuration name="&lt;template&gt;" type="WebApp" default="true" selected="false">
       <Host>localhost</Host>
@@ -735,13 +738,13 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1552" height="938" extended-state="6" />
+    <frame x="-8" y="-8" width="1936" height="1168" extended-state="6" />
     <editor active="false" />
     <layout>
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="JetGradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
-      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24949563" sideWeight="0.36936936" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32947975" sideWeight="0.5" order="10" side_tool="true" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="true" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.2804304" sideWeight="0.0952381" order="2" side_tool="true" content_ui="tabs" />
@@ -751,8 +754,8 @@
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="true" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.2804304" sideWeight="0.36936936" order="0" side_tool="false" content_ui="combo" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.6306306" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.22287546" sideWeight="0.51340616" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Run" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.48659384" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3273743" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
@@ -829,34 +832,14 @@
         <state line="25" column="158" selection-start="776" selection-end="776" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/Index/Indexer.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="6" column="22" selection-start="126" selection-end="126" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/DocumentModel/Document.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="31" column="8" selection-start="713" selection-end="1246" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/Index/Crawler.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="26" column="29" selection-start="656" selection-end="656" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/Interface/MainFrame.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="15" column="45" selection-start="378" selection-end="378" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/Interface/SearchPanel.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="33" column="27" selection-start="1056" selection-end="1056" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/Query/InteractiveSearchHandler.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="18" column="28" selection-start="527" selection-end="527" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/Query/QueryString.java">
@@ -883,35 +866,59 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/Tests/TriePriorityTraverserTest.java">
+    <entry file="file://$PROJECT_DIR$/src/Tests/ActivePriorityNodeTest.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="16" column="27" selection-start="329" selection-end="329" vertical-scroll-proportion="0.0">
+        <state line="16" column="66" selection-start="433" selection-end="433" vertical-scroll-proportion="0.0">
           <folding>
-            <element signature="imports" expanded="true" />
+            <element signature="e#3291#3308#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/Query/TriePriorityTraverser.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="25" column="41" selection-start="515" selection-end="945" vertical-scroll-proportion="0.452237">
+        <state line="29" column="122" selection-start="1223" selection-end="1223" vertical-scroll-proportion="0.0">
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/Query/InteractiveSearchHandler.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="18" column="24" selection-start="524" selection-end="524" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/Index/Indexer.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="6" column="22" selection-start="126" selection-end="126" vertical-scroll-proportion="0.0" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/Index/Crawler.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="26" column="29" selection-start="656" selection-end="656" vertical-scroll-proportion="0.0" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/Interface/MainFrame.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="15" column="50" selection-start="383" selection-end="383" vertical-scroll-proportion="0.16452992">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/Tests/TriePriorityTraverserTest.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="46" column="42" selection-start="1450" selection-end="1450" vertical-scroll-proportion="0.38883632">
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/Query/ActivePriorityNode.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="154" column="102" selection-start="4979" selection-end="4979" vertical-scroll-proportion="0.38573155">
+        <state line="154" column="102" selection-start="4979" selection-end="4979" vertical-scroll-proportion="0.30179754">
           <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/Tests/ActivePriorityNodeTest.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="16" column="66" selection-start="433" selection-end="433" vertical-scroll-proportion="0.19642857">
-          <folding>
-            <element signature="e#3291#3308#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>

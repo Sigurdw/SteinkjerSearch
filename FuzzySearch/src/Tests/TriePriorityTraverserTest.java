@@ -42,4 +42,37 @@ public class TriePriorityTraverserTest {
             assert suggestion.get(i).equals(noCacheSuggestions.get(i));
         }
     }
+
+    @Test
+    public void testAddCharacterWithSkewedIndex() throws Exception {
+        QueryString queryString = new QueryString();
+        TestDocument doc1 = new TestDocument("TestDoc1", null, null);
+        root.addKeyDataPair("aa", doc1);
+        root.addKeyDataPair("aa", doc1);
+        root.addKeyDataPair("aa", doc1);
+        root.addKeyDataPair("aa", doc1);
+
+        root.addKeyDataPair("ab", doc1);
+        root.addKeyDataPair("ab", doc1);
+        root.addKeyDataPair("ab", doc1);
+
+        root.addKeyDataPair("ba", doc1);
+        root.addKeyDataPair("ba", doc1);
+        root.addKeyDataPair("bb", doc1);
+
+        TriePriorityTraverser traverser = new TriePriorityTraverser(root, queryString);
+        queryString.SetQueryString("a");
+        ArrayList<String> suggestion = traverser.addCharacter();
+
+        queryString.SetQueryString("ab");
+        suggestion = traverser.addCharacter();
+
+        traverser = new TriePriorityTraverser(root, queryString);
+        ArrayList<String> noCacheSuggestions = traverser.addCharacter();
+
+        assert suggestion.size() == noCacheSuggestions.size();
+        for(int i = 0; i < suggestion.size(); i++){
+            assert suggestion.get(i).equals(noCacheSuggestions.get(i));
+        }
+    }
 }
