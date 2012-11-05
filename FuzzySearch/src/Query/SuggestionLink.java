@@ -19,6 +19,7 @@ public class SuggestionLink extends Link{
     public ActivePriorityNode UseLink() {
         System.out.println("Using suggestion link: " + this);
         BackLink backLink = source.makeBackLink(destinationNode);
+        System.out.println(backLink);
         destinationNode.addLink(backLink);
         return destinationNode;
     }

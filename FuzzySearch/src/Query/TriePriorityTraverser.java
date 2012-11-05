@@ -7,7 +7,7 @@ import java.util.ArrayList;
 
 public class TriePriorityTraverser {
     private ActivePriorityNode rootActiveNode;
-    private final int NumberOfRequiredSuggestions = 10;
+    private final int NumberOfRequiredSuggestions = 5;
     private QueryString queryString;
 
     public TriePriorityTraverser(Trie<IDocument> root, QueryString queryString){
@@ -18,6 +18,7 @@ public class TriePriorityTraverser {
     public ArrayList<String> addCharacter(){
         ActivePriorityNode activePriorityNode = rootActiveNode.getBestNextActiveNode();
         ArrayList<ActivePriorityNode> exhaustedNodes = new ArrayList<ActivePriorityNode>();
+        ActivePriorityNode lastNode = null;
 
         ArrayList<Trie<IDocument>> suggestionNodes = new ArrayList<Trie<IDocument>>();
         int numberOfIterations = 0;
@@ -31,6 +32,8 @@ public class TriePriorityTraverser {
                 if(!exhaustedNodes.contains(activePriorityNode)){
                     exhaustedNodes.add(activePriorityNode);
                 }
+
+                lastNode = activePriorityNode;
             }
 
             if(suggestionNodes.size() >= NumberOfRequiredSuggestions){
@@ -40,7 +43,7 @@ public class TriePriorityTraverser {
             activePriorityNode = activePriorityNode.getBestNextActiveNode();
         }
 
-        makeStarCache(exhaustedNodes);
+        makeStarCache(exhaustedNodes, lastNode);
 
         System.out.println("The number of exhausted nodes was: " + exhaustedNodes.size());
         System.out.println("The number of iterations was: " + numberOfIterations);
@@ -73,9 +76,9 @@ public class TriePriorityTraverser {
         }
     }
 
-    private void makeStarCache(ArrayList<ActivePriorityNode> exhaustedNodes) {
+    private void makeStarCache(ArrayList<ActivePriorityNode> exhaustedNodes, ActivePriorityNode lastNode) {
         ActivePriorityNode rootNode = exhaustedNodes.get(0);
-        BackLink backLink = exhaustedNodes.get(exhaustedNodes.size() - 1).stealBacklink();
+        BackLink backLink = lastNode.stealBacklink();
         backLink.setSource(rootNode);
         rootNode.addLink(backLink);
         for(int i = 1; i < exhaustedNodes.size(); i++){

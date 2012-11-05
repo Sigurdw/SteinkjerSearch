@@ -308,7 +308,7 @@ public class ActivePriorityNode {
 
     public BackLink stealBacklink() {
         Link backlink = linkQueue.poll();
-        assert backlink instanceof BackLink;
+        System.out.println(backlink);
         return (BackLink)backlink;
     }
 }
