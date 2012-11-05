@@ -305,4 +305,10 @@ public class ActivePriorityNode {
     public void perserveLink(){
         perserveLink = true;
     }
+
+    public BackLink stealBacklink() {
+        Link backlink = linkQueue.poll();
+        assert backlink instanceof BackLink;
+        return (BackLink)backlink;
+    }
 }

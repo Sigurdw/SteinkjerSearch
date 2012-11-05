@@ -30,7 +30,6 @@ public class TriePriorityTraverser {
 
                 if(!exhaustedNodes.contains(activePriorityNode)){
                     exhaustedNodes.add(activePriorityNode);
-                    System.out.println("Will not add node to cache.");
                 }
             }
 
@@ -41,7 +40,7 @@ public class TriePriorityTraverser {
             activePriorityNode = activePriorityNode.getBestNextActiveNode();
         }
 
-        handleCacheStructure(exhaustedNodes);
+        makeStarCache(exhaustedNodes);
 
         System.out.println("The number of exhausted nodes was: " + exhaustedNodes.size());
         System.out.println("The number of iterations was: " + numberOfIterations);
@@ -66,6 +65,29 @@ public class TriePriorityTraverser {
 
             previouslyExhaustedNode.addLink(shortcutLink);
             previouslyExhaustedNode.ignoreBackLinks();
+            System.out.println("Added shortcut " + shortcutLink);
+        }
+
+        if(exhaustedNodes.size() > 0){
+            rootActiveNode = exhaustedNodes.get(0);
+        }
+    }
+
+    private void makeStarCache(ArrayList<ActivePriorityNode> exhaustedNodes) {
+        ActivePriorityNode rootNode = exhaustedNodes.get(0);
+        BackLink backLink = exhaustedNodes.get(exhaustedNodes.size() - 1).stealBacklink();
+        backLink.setSource(rootNode);
+        rootNode.addLink(backLink);
+        for(int i = 1; i < exhaustedNodes.size(); i++){
+            ActivePriorityNode currentExhaustedNode = exhaustedNodes.get(i);
+
+            ShortcutLink shortcutLink = new ShortcutLink(
+                    currentExhaustedNode.getRank(),
+                    rootNode,
+                    currentExhaustedNode);
+
+            rootNode.addLink(shortcutLink);
+            currentExhaustedNode.ignoreBackLinks();
             System.out.println("Added shortcut " + shortcutLink);
         }
 
