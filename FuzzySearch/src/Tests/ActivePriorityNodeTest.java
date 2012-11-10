@@ -18,7 +18,7 @@ public class ActivePriorityNodeTest {
         root.addKeyDataPair("Test", document);
 
         QueryString queryString = new QueryString();
-        ActivePriorityNode priorityNodeTest = new ActivePriorityNode(root, queryString);
+        ActivePriorityNode priorityNodeTest = new ActivePriorityNode(root, queryString, null);
         assert priorityNodeTest.isExhausted();
 
         queryString.SetQueryString("T");
@@ -34,7 +34,7 @@ public class ActivePriorityNodeTest {
         root.addKeyDataPair("Test", document);
 
         QueryString queryString = new QueryString();
-        ActivePriorityNode firstNode = new ActivePriorityNode(root, queryString);
+        ActivePriorityNode firstNode = new ActivePriorityNode(root, queryString, null);
 
         queryString.SetQueryString("T");
 
@@ -55,7 +55,7 @@ public class ActivePriorityNodeTest {
         root.addKeyDataPair("Test", document);
 
         QueryString queryString = new QueryString();
-        ActivePriorityNode activeNode = new ActivePriorityNode(root, queryString);
+        ActivePriorityNode activeNode = new ActivePriorityNode(root, queryString, null);
 
         queryString.SetQueryString("A");
 
@@ -90,7 +90,7 @@ public class ActivePriorityNodeTest {
         root.addKeyDataPair("bb", doc1);
         root.addKeyDataPair("ab", doc1);
 
-        ActivePriorityNode activeNode = new ActivePriorityNode(root, queryString);
+        ActivePriorityNode activeNode = new ActivePriorityNode(root, queryString, null);
 
         queryString.SetQueryString("b");
 

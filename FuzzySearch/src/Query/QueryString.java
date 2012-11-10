@@ -9,7 +9,6 @@ public class QueryString {
 
     public void SetQueryString(String queryString){
         this.queryString = queryString;
-        System.out.println("Query is now: " + queryString);
     }
 
     public char GetCharacter(int queryStringIndex){
@@ -18,7 +17,6 @@ public class QueryString {
             character = queryString.charAt(queryStringIndex);
         }
 
-        System.out.println("Returning character: " + character + " for index: " + queryStringIndex + " query was: " + queryString);
         return character;
     }
 

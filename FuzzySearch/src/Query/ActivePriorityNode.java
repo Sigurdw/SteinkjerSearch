@@ -4,6 +4,7 @@ import DataStructure.Trie;
 import DocumentModel.IDocument;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.PriorityQueue;
 
 public class ActivePriorityNode {
@@ -18,11 +19,12 @@ public class ActivePriorityNode {
     private QueryString queryString;
     private double editDiscount;
     private boolean isSubstitution;
+    private ILinkDiscarder linkDiscarder;
 
     private PriorityQueue<Link> linkQueue = new PriorityQueue<Link>();
     private boolean perserveLink = false;
 
-    ActivePriorityNode(
+    private ActivePriorityNode(
             Trie<IDocument> queryPosition,
             int previousEdits,
             EditOperation lastEditOperation,
@@ -30,7 +32,8 @@ public class ActivePriorityNode {
             int queryStringIndex,
             QueryString queryString,
             double editDiscount,
-            boolean isSubstitution
+            boolean isSubstitution,
+            ILinkDiscarder linkDiscarder
     )
     {
         this.queryPosition = queryPosition;
@@ -40,14 +43,20 @@ public class ActivePriorityNode {
         this.queryString = queryString;
         this.editDiscount = editDiscount;
         this.isSubstitution = isSubstitution;
+        this.linkDiscarder = linkDiscarder;
+
         if(backlink != null){
             backlink.setSource(this);
             linkQueue.add(backlink);
         }
     }
 
-    public ActivePriorityNode(Trie<IDocument> rootNode, QueryString queryString){
-        this(rootNode, 0, EditOperation.Match, null, 0, queryString, 1, false);
+    public ActivePriorityNode(
+            Trie<IDocument> rootNode,
+            QueryString queryString,
+            ILinkDiscarder linkDiscarder)
+    {
+        this(rootNode, 0, EditOperation.Match, null, 0, queryString, 1, false, linkDiscarder);
     }
 
     public String toString(){
@@ -71,6 +80,10 @@ public class ActivePriorityNode {
         System.out.println("List of links at " + this);
         System.out.println(linkQueue);
         Link link = GetBestLink();
+        if(link.getRank() <= 0){
+            return null;
+        }
+
         return link.UseLink();
     }
 
@@ -121,8 +134,17 @@ public class ActivePriorityNode {
             Trie<IDocument> match = getMatch();
             System.out.println(match);
             if(match != null){
-                double rank = getDiscountRank(match, EditOperation.getOperationDiscount(EditOperation.Match));
-                addLink(new MatchLink(rank, this, match));
+                double rank = getDiscountRank(match, EditOperation.getOperationDiscount(
+                        EditOperation.Match,
+                        previousEdits));
+                int movement = EditOperation.getOperationMovement(EditOperation.Match);
+                addLink(new MatchLink(
+                            rank,
+                            this,
+                            match,
+                            previousEdits,
+                            queryStringIndex + movement,
+                            editDiscount));
             }
         }
     }
@@ -132,14 +154,30 @@ public class ActivePriorityNode {
             int cost = EditOperation.getOperationCost(lastEditOperation, EditOperation.Delete);
             double modifier = 1;
             if(cost != 0){
-                modifier = EditOperation.getOperationDiscount(EditOperation.Delete);
+                modifier = EditOperation.getOperationDiscount(EditOperation.Delete, previousEdits);
             }
+
+            int movement = EditOperation.getOperationMovement(EditOperation.Delete);
 
             double deleteRank = getDiscountRank(
                     queryPosition,
                     modifier);
-            Link deleteLink = new EditLink(deleteRank, this, queryPosition, EditOperation.Delete);
-            linkQueue.add(deleteLink);
+            EditLink deleteLink = new EditLink(
+                    deleteRank,
+                    this,
+                    queryPosition,
+                    EditOperation.Delete,
+                    previousEdits + cost,
+                    queryStringIndex + movement,
+                    editDiscount * modifier,
+                    cost == 0);
+
+            if(deleteLink.isValid(queryString)){
+                linkQueue.add(deleteLink);
+            }
+            else{
+                linkDiscarder.discardLink(deleteLink);
+            }
         }
     }
 
@@ -154,17 +192,48 @@ public class ActivePriorityNode {
     }
 
     private void AddNextEditsToList() {
+        EditLink insertLink = GetNextEditLink();
+        if(insertLink != null){
+            if(insertLink.isValid(queryString)){
+                linkQueue.add(insertLink);
+            }
+            else{
+                linkDiscarder.discardLink(insertLink);
+            }
+        }
+    }
+
+    public EditLink stealNextEditLink(){
+        return GetNextEditLink();
+    }
+
+    private EditLink GetNextEditLink(){
         if(EditOperation.isOperationAllowed(lastEditOperation, EditOperation.Insert) || isSubstitution){
             Trie<IDocument> bestEditNode = getNextEditNode();
             if(bestEditNode != null){
+                double modifier = EditOperation.getOperationDiscount(EditOperation.Insert, previousEdits);
                 double rank = getDiscountRank(
                         bestEditNode,
-                        EditOperation.getOperationDiscount(EditOperation.Insert));
+                        modifier);
 
-                EditLink insertLink = new EditLink(rank, this, bestEditNode, EditOperation.Insert);
-                linkQueue.add(insertLink);
+                int cost = EditOperation.getOperationCost(lastEditOperation, EditOperation.Insert);
+                int movement = EditOperation.getOperationMovement(EditOperation.Insert);
+
+                EditLink insertLink = new EditLink(
+                        rank,
+                        this,
+                        bestEditNode,
+                        EditOperation.Insert,
+                        previousEdits + cost,
+                        queryStringIndex + movement,
+                        editDiscount * modifier,
+                        false);
+
+                return insertLink;
             }
         }
+
+        return null;
     }
 
     private Trie<IDocument> getNextEditNode() {
@@ -224,30 +293,36 @@ public class ActivePriorityNode {
         return node.getRank() * modifier * editDiscount;
     }
 
-    public ActivePriorityNode createChild(Trie<IDocument> position, EditOperation editOperation) {
-        int cost = EditOperation.getOperationCost(lastEditOperation, editOperation);
-        double childEditDiscount = editDiscount * EditOperation.getOperationDiscount(editOperation);
-        boolean isSubstitution = editOperation == EditOperation.Delete && lastEditOperation == EditOperation.Insert;
-        if(isSubstitution){
-            childEditDiscount = editDiscount;
-
+    public void maybyAddNextActiveNode(EditOperation editOperation){
+        if(editOperation == EditOperation.Insert){
+            AddNextEditsToList();
         }
+    }
 
-        int movement = EditOperation.getOperationMovement(editOperation);
+    public ActivePriorityNode createChild(
+            Trie<IDocument> position,
+            EditOperation editOperation,
+            int numberOfEdits,
+            int queryStringIndex,
+            double editDiscount,
+            boolean isSubstitution)
+    {
         if(editOperation == EditOperation.Insert){
             AddNextEditsToList();
         }
 
         BackLink backlink = new BackLink(getNextRank(), this);
+
         return new ActivePriorityNode(
                 position,
-                previousEdits + cost,
+                numberOfEdits,
                 editOperation,
                 backlink,
-                queryStringIndex + movement,
+                queryStringIndex,
                 queryString,
-                childEditDiscount,
-                isSubstitution
+                editDiscount,
+                isSubstitution,
+                linkDiscarder
                 );
     }
 

@@ -1,13 +1,5 @@
 package Query;
 
-/**
- * Created with IntelliJ IDEA.
- * Copywrite:   Sigurd Wien
- * User:        Sigurd
- * Date:        28.09.12
- * Time:        17:25
- * To change this template use File | Settings | File Templates.
- */
 public enum EditOperation {
     Insert,
     Delete,
@@ -82,21 +74,23 @@ public enum EditOperation {
         return movement;
     }
 
-    public static double getOperationDiscount(EditOperation editOperation) {
+    public static double getOperationDiscount(EditOperation editOperation, int previousEdits) {
         double discount = -1;
+
+        int edits = previousEdits + 1;
 
         switch (editOperation){
             case Insert:
-                discount = 0.5;
+                discount = 0.5 / edits;
                 break;
             case Delete:
-                discount = 0.5;
+                discount = 0.5 / edits;
                 break;
             case Match:
                 discount = 1;
                 break;
             case Substitution:
-                discount = 0.5;
+                discount = 0.5 / edits;
                 break;
         }
 

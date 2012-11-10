@@ -5,17 +5,20 @@ import DocumentModel.IDocument;
 
 import java.util.ArrayList;
 
-public class TriePriorityTraverser {
+public class TriePriorityTraverser implements ILinkDiscarder {
     private ActivePriorityNode rootActiveNode;
-    private final int NumberOfRequiredSuggestions = 5;
+    private final int NumberOfRequiredSuggestions = 10;
     private QueryString queryString;
+    private ArrayList<IDiscardableLink> discardedLinks = new ArrayList<IDiscardableLink>();
 
     public TriePriorityTraverser(Trie<IDocument> root, QueryString queryString){
         this.queryString = queryString;
-        rootActiveNode = new ActivePriorityNode(root, queryString);
+        rootActiveNode = new ActivePriorityNode(root, queryString, this);
     }
 
     public ArrayList<String> addCharacter(){
+        MaybeUsePreviouslyDiscardedLinks();
+
         ActivePriorityNode activePriorityNode = rootActiveNode.getBestNextActiveNode();
         ArrayList<ActivePriorityNode> exhaustedNodes = new ArrayList<ActivePriorityNode>();
         ActivePriorityNode lastNode = null;
@@ -24,7 +27,8 @@ public class TriePriorityTraverser {
         int numberOfIterations = 0;
         while(activePriorityNode != null){
             numberOfIterations++;
-            System.out.println("inner iteration on " + queryString.GetLastCharacter());
+            System.out.println(
+                    "inner iteration " + numberOfIterations + " on " + queryString.GetLastCharacter());
             if(activePriorityNode.isExhausted()){
                 int suggestionsNeeded = NumberOfRequiredSuggestions - suggestionNodes.size();
                 activePriorityNode.getSuggestions(suggestionNodes, suggestionsNeeded);
@@ -56,6 +60,21 @@ public class TriePriorityTraverser {
         return suggestions;
     }
 
+    private void MaybeUsePreviouslyDiscardedLinks() {
+        ArrayList<IDiscardableLink> tempDiscardedList = new ArrayList<IDiscardableLink>();
+        for(IDiscardableLink link : discardedLinks){
+            if(link.isValid(queryString)){
+                link.setSource(rootActiveNode);
+                rootActiveNode.addLink((Link)link);
+            }
+            else{
+                tempDiscardedList.add(link);
+            }
+        }
+
+        discardedLinks = tempDiscardedList;
+    }
+
     private void handleCacheStructure(ArrayList<ActivePriorityNode> exhaustedNodes) {
         for(int i = 1; i < exhaustedNodes.size(); i++){
             ActivePriorityNode previouslyExhaustedNode = exhaustedNodes.get(i - 1);
@@ -68,7 +87,6 @@ public class TriePriorityTraverser {
 
             previouslyExhaustedNode.addLink(shortcutLink);
             previouslyExhaustedNode.ignoreBackLinks();
-            System.out.println("Added shortcut " + shortcutLink);
         }
 
         if(exhaustedNodes.size() > 0){
@@ -77,10 +95,18 @@ public class TriePriorityTraverser {
     }
 
     private void makeStarCache(ArrayList<ActivePriorityNode> exhaustedNodes, ActivePriorityNode lastNode) {
+        if(exhaustedNodes.size() < 1){
+            System.out.println("No results found");
+            return;
+        }
+
         ActivePriorityNode rootNode = exhaustedNodes.get(0);
         BackLink backLink = lastNode.stealBacklink();
-        backLink.setSource(rootNode);
-        rootNode.addLink(backLink);
+        if(backLink != null){
+            backLink.setSource(rootNode);
+            rootNode.addLink(backLink);
+        }
+
         for(int i = 1; i < exhaustedNodes.size(); i++){
             ActivePriorityNode currentExhaustedNode = exhaustedNodes.get(i);
 
@@ -91,11 +117,15 @@ public class TriePriorityTraverser {
 
             rootNode.addLink(shortcutLink);
             currentExhaustedNode.ignoreBackLinks();
-            System.out.println("Added shortcut " + shortcutLink);
         }
 
         if(exhaustedNodes.size() > 0){
             rootActiveNode = exhaustedNodes.get(0);
         }
+    }
+
+    public void discardLink(IDiscardableLink link){
+        System.out.println("Discarding link " + link);
+        discardedLinks.add(link);
     }
 }
