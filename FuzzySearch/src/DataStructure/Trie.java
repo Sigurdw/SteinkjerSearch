@@ -1,6 +1,7 @@
 package DataStructure;
 
 import Index.Indexer;
+import Query.ISuggestionWrapper;
 
 import java.util.*;
 
@@ -10,7 +11,7 @@ public class Trie<T> implements Comparable<Trie<T>> {
     private ArrayList<Trie<T>> rankSortedChildren = new ArrayList<Trie<T>>();
     private String label;
     private ArrayList<Trie<T>> suggestionCache = new ArrayList<Trie<T>>();
-    private int cacheSize = 4;
+    private int cacheSize = 10;
     private int termFrequency = 0;
 
     private double rank;
@@ -90,6 +91,22 @@ public class Trie<T> implements Comparable<Trie<T>> {
 
     public ArrayList<Trie<T>> getCachedSuggestions(){
         return suggestionCache;
+    }
+
+    public ArrayList<String> getSuggestions(){
+        ArrayList<String> suggestions = new ArrayList<String>();
+        getSuggestions(suggestions);
+        return suggestions;
+    }
+
+    private void getSuggestions(ArrayList<String> suggestions){
+        if(dataList.size() > 0){
+            suggestions.add(label);
+        }
+
+        for(Trie<T> child :children.values()){
+            child.getSuggestions(suggestions);
+        }
     }
 
     public ArrayList<String> getSuggestions(String partialKey){

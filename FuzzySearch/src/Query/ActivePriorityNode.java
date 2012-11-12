@@ -24,6 +24,8 @@ public class ActivePriorityNode {
     private PriorityQueue<Link> linkQueue = new PriorityQueue<Link>();
     private boolean perserveLink = false;
 
+    private final int MaxEdits = 10;
+
     private ActivePriorityNode(
             Trie<IDocument> queryPosition,
             int previousEdits,
@@ -152,31 +154,33 @@ public class ActivePriorityNode {
     private void AddDeleteToList(){
         if(canDelete()){
             int cost = EditOperation.getOperationCost(lastEditOperation, EditOperation.Delete);
-            double modifier = 1;
-            if(cost != 0){
-                modifier = EditOperation.getOperationDiscount(EditOperation.Delete, previousEdits);
-            }
+            if(previousEdits + cost <= MaxEdits){
+                double modifier = 1;
+                if(cost != 0){
+                    modifier = EditOperation.getOperationDiscount(EditOperation.Delete, previousEdits);
+                }
 
-            int movement = EditOperation.getOperationMovement(EditOperation.Delete);
+                int movement = EditOperation.getOperationMovement(EditOperation.Delete);
 
-            double deleteRank = getDiscountRank(
-                    queryPosition,
-                    modifier);
-            EditLink deleteLink = new EditLink(
-                    deleteRank,
-                    this,
-                    queryPosition,
-                    EditOperation.Delete,
-                    previousEdits + cost,
-                    queryStringIndex + movement,
-                    editDiscount * modifier,
-                    cost == 0);
+                double deleteRank = getDiscountRank(
+                        queryPosition,
+                        modifier);
+                EditLink deleteLink = new EditLink(
+                        deleteRank,
+                        this,
+                        queryPosition,
+                        EditOperation.Delete,
+                        previousEdits + cost,
+                        queryStringIndex + movement,
+                        editDiscount * modifier,
+                        cost == 0);
 
-            if(deleteLink.isValid(queryString)){
+                //if(deleteLink.isValid(queryString)){
                 linkQueue.add(deleteLink);
-            }
-            else{
-                linkDiscarder.discardLink(deleteLink);
+                /*}
+               else{
+                   linkDiscarder.discardLink(deleteLink);
+               } */
             }
         }
     }
@@ -192,13 +196,15 @@ public class ActivePriorityNode {
     }
 
     private void AddNextEditsToList() {
-        EditLink insertLink = GetNextEditLink();
-        if(insertLink != null){
-            if(insertLink.isValid(queryString)){
+        if(previousEdits + 1 <= MaxEdits){
+            EditLink insertLink = GetNextEditLink();
+            if(insertLink != null){
+                //if(insertLink.isValid(queryString)){
                 linkQueue.add(insertLink);
-            }
-            else{
-                linkDiscarder.discardLink(insertLink);
+                /*}
+                else{
+                    linkDiscarder.discardLink(insertLink);
+                }*/
             }
         }
     }
@@ -262,7 +268,7 @@ public class ActivePriorityNode {
         ignoreBackLink = true;
     }
 
-    public void getSuggestions(ArrayList<Trie<IDocument>> suggestionNodes, int neededSuggestions){
+    public void getSuggestions(ArrayList<ISuggestionWrapper> suggestionsWrappers, int neededSuggestions){
         int numberOfUsedSuggestions = 0;
         ArrayList<Trie<IDocument>> suggestions = queryPosition.getCachedSuggestions();
         for (int i = nextSuggestion; i < Math.min(nextSuggestion + neededSuggestions, suggestions.size()); i++){
@@ -272,8 +278,16 @@ public class ActivePriorityNode {
                 break;
             }
 
-            if(!suggestionNodes.contains(suggestionDocument)){
-                suggestionNodes.add(suggestionDocument);
+            boolean hasSuggestion = false;
+            for(ISuggestionWrapper suggestionWrapper : suggestionsWrappers){
+                if(suggestionWrapper.getSuggestion().equals(suggestionDocument.getLabel())){
+                    hasSuggestion = true;
+                    break;
+                }
+            }
+
+            if(!hasSuggestion){
+                suggestionsWrappers.add(new SuggestionWrapper(suggestionDocument.getLabel(), suggestionRank));
                 numberOfUsedSuggestions++;
             }
             else{
@@ -282,7 +296,7 @@ public class ActivePriorityNode {
         }
 
         nextSuggestion += numberOfUsedSuggestions;
-        System.out.println("Got these: " + suggestionNodes);
+        System.out.println("Got these: " + suggestionsWrappers);
     }
 
     public double getRank() {

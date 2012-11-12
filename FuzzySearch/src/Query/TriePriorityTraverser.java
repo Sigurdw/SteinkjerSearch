@@ -5,9 +5,9 @@ import DocumentModel.IDocument;
 
 import java.util.ArrayList;
 
-public class TriePriorityTraverser implements ILinkDiscarder {
+public class TriePriorityTraverser implements ILinkDiscarder, ITrieTraverser {
     private ActivePriorityNode rootActiveNode;
-    private final int NumberOfRequiredSuggestions = 10;
+    private final int NumberOfRequiredSuggestions = 4;
     private QueryString queryString;
     private ArrayList<IDiscardableLink> discardedLinks = new ArrayList<IDiscardableLink>();
 
@@ -16,22 +16,22 @@ public class TriePriorityTraverser implements ILinkDiscarder {
         rootActiveNode = new ActivePriorityNode(root, queryString, this);
     }
 
-    public ArrayList<String> addCharacter(){
-        MaybeUsePreviouslyDiscardedLinks();
+    public ArrayList<ISuggestionWrapper> addCharacter(){
+        //MaybeUsePreviouslyDiscardedLinks();
 
         ActivePriorityNode activePriorityNode = rootActiveNode.getBestNextActiveNode();
         ArrayList<ActivePriorityNode> exhaustedNodes = new ArrayList<ActivePriorityNode>();
         ActivePriorityNode lastNode = null;
 
-        ArrayList<Trie<IDocument>> suggestionNodes = new ArrayList<Trie<IDocument>>();
+        ArrayList<ISuggestionWrapper> suggestions = new ArrayList<ISuggestionWrapper>();
         int numberOfIterations = 0;
         while(activePriorityNode != null){
             numberOfIterations++;
             System.out.println(
                     "inner iteration " + numberOfIterations + " on " + queryString.GetLastCharacter());
             if(activePriorityNode.isExhausted()){
-                int suggestionsNeeded = NumberOfRequiredSuggestions - suggestionNodes.size();
-                activePriorityNode.getSuggestions(suggestionNodes, suggestionsNeeded);
+                int suggestionsNeeded = NumberOfRequiredSuggestions - suggestions.size();
+                activePriorityNode.getSuggestions(suggestions, suggestionsNeeded);
 
                 if(!exhaustedNodes.contains(activePriorityNode)){
                     exhaustedNodes.add(activePriorityNode);
@@ -40,7 +40,7 @@ public class TriePriorityTraverser implements ILinkDiscarder {
                 lastNode = activePriorityNode;
             }
 
-            if(suggestionNodes.size() >= NumberOfRequiredSuggestions){
+            if(suggestions.size() >= NumberOfRequiredSuggestions){
                 break;
             }
 
@@ -51,11 +51,6 @@ public class TriePriorityTraverser implements ILinkDiscarder {
 
         System.out.println("The number of exhausted nodes was: " + exhaustedNodes.size());
         System.out.println("The number of iterations was: " + numberOfIterations);
-
-        ArrayList<String> suggestions = new ArrayList<String>();
-        for(Trie<IDocument> suggestionNode : suggestionNodes){
-            suggestions.add(suggestionNode.getLabel());
-        }
 
         return suggestions;
     }

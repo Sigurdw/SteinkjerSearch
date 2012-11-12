@@ -35,7 +35,7 @@ public class EditLink extends Link implements IDiscardableLink {
 
     @Override
     public ActivePriorityNode UseLink() {
-        System.out.println("Using " + this);
+        //System.out.println("Using " + this);
         if(newSourceNode != null){
             if(editOperation == EditOperation.Insert){
                 EditLink insertLink = sourceNode.stealNextEditLink();
@@ -79,6 +79,6 @@ public class EditLink extends Link implements IDiscardableLink {
 
     @Override
     public boolean isValid(QueryString queryString) {
-        return (double)numberOfEdits / (double)queryString.GetLength() < 0.75;
+        return true; //return (double)numberOfEdits / (double)queryString.GetLength() < 0.75;
     }
 }

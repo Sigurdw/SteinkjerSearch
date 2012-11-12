@@ -5,39 +5,47 @@ import DocumentModel.IDocument;
 
 import java.util.*;
 
-/**
- * Created with IntelliJ IDEA.
- * Copywrite:   Sigurd Wien
- * User:        Sigurd
- * Date:        28.09.12
- * Time:        16:38
- * To change this template use File | Settings | File Templates.
- */
 public class ActiveQuery {
     Trie<IDocument> queryPosition;
-    int allowedEdits;
+    int previousEdits;
     EditOperation lastEditOperation;
-    Link backlink;
+    private QueryString queryString;
+    private int queryStringIndex;
+    private boolean substitution;
+
+    private final int MaxEdits = 3;
 
     public ActiveQuery(
             Trie<IDocument> queryPosition,
-            int allowedEdits,
-            EditOperation lastEditOperation)
+            int previousEdtis,
+            EditOperation lastEditOperation,
+            QueryString queryString,
+            int queryStringIndex,
+            boolean isSubstitution)
     {
         this.queryPosition = queryPosition;
-        this.allowedEdits = allowedEdits;
+        this.previousEdits = previousEdtis;
         this.lastEditOperation = lastEditOperation;
+        this.queryString = queryString;
+        this.queryStringIndex = queryStringIndex;
+        substitution = isSubstitution;
     }
 
-    public void addCharacter(char character, ArrayList<ActiveQuery> activeQueries){
+    public void addCharacter(ArrayList<ActiveQuery> activeQueries){
         Map<Character, Trie<IDocument>> candidateQueryPositions = queryPosition.getChildren();
         for(Character candidatePath : candidateQueryPositions.keySet()){
             Trie<IDocument> newQueryPosition = candidateQueryPositions.get(candidatePath);
-            if(candidatePath == character){
-                activeQueries.add(new ActiveQuery(newQueryPosition, allowedEdits, EditOperation.Match));
+            if(candidatePath == queryString.GetCharacter(queryStringIndex)){
+                activeQueries.add(new ActiveQuery(
+                        newQueryPosition,
+                        previousEdits,
+                        EditOperation.Match,
+                        queryString,
+                        queryStringIndex + 1,
+                        false));
             }
             else{
-                processEdits(character, newQueryPosition, activeQueries);
+                processEdits(newQueryPosition, activeQueries);
             }
         }
 
@@ -45,62 +53,77 @@ public class ActiveQuery {
     }
 
     private void processEdits(
-            char character,
             Trie<IDocument> newQueryPosition,
             ArrayList<ActiveQuery> activeQueries)
     {
-        if(allowedEdits > 0){
-            processAdd(character, newQueryPosition, activeQueries);
-            processSubstitution(newQueryPosition, activeQueries);
+        if(previousEdits > 0){
+            processInsert(newQueryPosition, activeQueries);
         }
     }
 
-    private void processAdd(
-            char character,
-            Trie<IDocument> newQueryPosition,
-            ArrayList<ActiveQuery> activeQueries)
+    private void processInsert(Trie<IDocument> newQueryPosition, ArrayList<ActiveQuery> activeQueries)
     {
-        if(isAllowedToAdd()){
+        if(isAllowedToInsert()){
             ActiveQuery tempActiveQuery = new ActiveQuery(
                     newQueryPosition,
-                    allowedEdits - 1,
-                    EditOperation.Insert);
+                    previousEdits + 1,
+                    EditOperation.Insert,
+                    queryString,
+                    queryStringIndex,
+                    false);
 
-             tempActiveQuery.addCharacter(character, activeQueries);
+             tempActiveQuery.addCharacter(activeQueries);
         }
     }
 
-    private boolean isAllowedToAdd() {
-        return lastEditOperation != EditOperation.Substitution && lastEditOperation != EditOperation.Delete;
-    }
-
-
-    private void processSubstitution(Trie<IDocument> newQueryPosition, ArrayList<ActiveQuery> activeQueries) {
-        if(isAllowedToSubstitute()){
-            activeQueries.add(
-                    new ActiveQuery(newQueryPosition, allowedEdits - 1, EditOperation.Substitution));
-        }
-    }
-
-    private boolean isAllowedToSubstitute() {
-        return lastEditOperation != EditOperation.Delete;
+    private boolean isAllowedToInsert() {
+        return (lastEditOperation != EditOperation.Delete || substitution) && previousEdits < MaxEdits;
     }
 
     private void processDeletes(ArrayList<ActiveQuery> activeQueries) {
         if(isAllowToDelete()){
-            activeQueries.add(new ActiveQuery(queryPosition, allowedEdits - 1, EditOperation.Delete));
+            int editCost = EditOperation.getOperationCost(lastEditOperation, EditOperation.Delete);
+            boolean isSubstitution  = false;
+            if(editCost == 0){
+                isSubstitution = true;
+            }
+
+            activeQueries.add(new ActiveQuery(
+                    queryPosition,
+                    previousEdits + editCost,
+                    EditOperation.Delete,
+                    queryString,
+                    queryStringIndex,
+                    isSubstitution));
         }
     }
 
     private boolean isAllowToDelete() {
-        return lastEditOperation != EditOperation.Insert && allowedEdits > 0;
+        return lastEditOperation == EditOperation.Insert || previousEdits < MaxEdits;
     }
 
     public String toString(){
-        return "Query.ActiveQuery: " + queryPosition.getLabel() + " Last operation: " + lastEditOperation + " allowed edits: " + allowedEdits;
+        return "Query.ActiveQuery: " + queryPosition.getLabel() + " Last operation: " + lastEditOperation + " allowed edits: " + previousEdits;
     }
 
     public String getLabel() {
         return queryPosition.getLabel();
+    }
+
+    public void getSuggestions(ArrayList<ISuggestionWrapper> suggestions) {
+        ArrayList<Trie<IDocument>> cachedSuggestions = queryPosition.getCachedSuggestions();
+        for (Trie<IDocument> suggestion : cachedSuggestions){
+            boolean hasSuggestion = false;
+            for(ISuggestionWrapper suggestionWrapper : suggestions){
+                if(suggestionWrapper.getSuggestion().equals(suggestion.getLabel())){
+                    hasSuggestion = true;
+                    break;
+                }
+            }
+
+            if(!hasSuggestion){
+                suggestions.add(new SuggestionWrapper(suggestion.getLabel(), suggestion.getRank() * EditOperation.getRankDiscount(previousEdits)));
+            }
+        }
     }
 }

@@ -2,10 +2,7 @@ package Index;
 
 import DataStructure.Trie;
 import DocumentModel.IDocument;
-import Query.ActiveQuery;
-import Query.EditOperation;
-import Query.QueryString;
-import Query.TriePriorityTraverser;
+import Query.*;
 
 import java.util.ArrayList;
 
@@ -26,8 +23,9 @@ public class Index {
         return indexImplementation.getSuggestions(partialKey);
     }
 
-    public ActiveQuery initInteractiveSearch(){
-        return new ActiveQuery(indexImplementation, 1, EditOperation.Match);
+    public NaiveTrieTraverser initInteractiveSearch(QueryString queryString){
+        ActiveQuery activeQuery = new ActiveQuery(indexImplementation, 1, EditOperation.Match, queryString, 0, false);
+        return new NaiveTrieTraverser(activeQuery);
     }
 
     public TriePriorityTraverser initFastInteractiveSearch(QueryString queryString){

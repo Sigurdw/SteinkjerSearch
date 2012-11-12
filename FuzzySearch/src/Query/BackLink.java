@@ -21,7 +21,7 @@ public class BackLink extends Link{
 
     @Override
     public ActivePriorityNode UseLink() {
-        System.out.println("Using back link: " + this);
+        //System.out.println("Using back link: " + this);
         Link forwardLink;
         if(source.isExhausted()){
             forwardLink = source.makeSuggestionLink(destination);
@@ -30,7 +30,7 @@ public class BackLink extends Link{
             forwardLink = source.makeForwardLink(destination);
         }
 
-        System.out.println("Making forward link: " + forwardLink.toString());
+        //System.out.println("Making forward link: " + forwardLink.toString());
         destination.addLink(forwardLink);
         return destination;
     }

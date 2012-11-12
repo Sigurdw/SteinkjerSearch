@@ -27,7 +27,7 @@ public class MatchLink extends Link{
 
     @Override
     public ActivePriorityNode UseLink() {
-        System.out.print("Using match link: " + this);
+        //System.out.print("Using match link: " + this);
         return sourceNode.createChild(
                 position,
                 EditOperation.Match,

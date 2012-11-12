@@ -12,7 +12,7 @@ public class ForwardLink extends Link{
 
     @Override
     public ActivePriorityNode UseLink() {
-        System.out.println("Using forward link: " + this);
+        //System.out.println("Using forward link: " + this);
         BackLink backLink = source.makeBackLink(destinationNode);
         destinationNode.addLink(backLink);
         return destinationNode;

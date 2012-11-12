@@ -39,9 +39,6 @@ public class Indexer {
             if(indexTerm.length() > 0){
                 indexTerms.add(indexTerm);
             }
-            else{
-                System.out.println("Token " + token + " was ignored under processing");
-            }
         }
 
         return indexTerms;

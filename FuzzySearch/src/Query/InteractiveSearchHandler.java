@@ -1,23 +1,32 @@
 package Query;
 
 import Index.Index;
-import Query.ActiveQuery;
 
 import java.util.ArrayList;
 
 public class InteractiveSearchHandler{
 
-    private ArrayList<ActiveQuery> activeQueries = new ArrayList<ActiveQuery>();
     private String activeQueryString = "";
     private Index index;
-    private TriePriorityTraverser query;
-    private ArrayList<String> suggestions = new ArrayList<String>();
+    private ITrieTraverser query;
+    private ArrayList<ISuggestionWrapper> suggestions = new ArrayList<ISuggestionWrapper>();
     private QueryString queryString = new QueryString();
+
+    private boolean isPlain = false;
 
 
     public InteractiveSearchHandler(Index index){
         this.index = index;
-        query = index.initFastInteractiveSearch(queryString);
+        initInteractiveSearch();
+    }
+
+    private void initInteractiveSearch() {
+        if(isPlain){
+            query = index.initInteractiveSearch(queryString);
+        }
+        else{
+            query = index.initFastInteractiveSearch(queryString);
+        }
     }
 
 
@@ -30,7 +39,7 @@ public class InteractiveSearchHandler{
             System.out.println(suggestions);
         }
         else{
-            suggestions = new ArrayList<String>();
+            suggestions = new ArrayList<ISuggestionWrapper>();
         }
     }
 
@@ -40,8 +49,7 @@ public class InteractiveSearchHandler{
                 addCharacter(queryString);
             }
             else{
-                query = index.initFastInteractiveSearch(this.queryString);
-                activeQueries.add(index.initInteractiveSearch());
+                initInteractiveSearch();
                 addCharacter(queryString);
             }
 
@@ -50,6 +58,11 @@ public class InteractiveSearchHandler{
     }
 
     public ArrayList<String> getSearchResults() {
-        return suggestions;
+        ArrayList<String> suggestionStrings = new ArrayList<String>(suggestions.size());
+        for (ISuggestionWrapper suggestion : suggestions){
+            suggestionStrings.add(suggestion.toString());
+        }
+
+        return suggestionStrings;
     }
 }

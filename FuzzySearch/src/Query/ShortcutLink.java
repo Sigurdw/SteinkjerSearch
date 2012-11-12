@@ -12,7 +12,7 @@ public class ShortcutLink extends Link {
 
     @Override
     public ActivePriorityNode UseLink() {
-        System.out.println("Using shortcut link: " + this);
+        //System.out.println("Using shortcut link: " + this);
         ShortcutLink backLink = source.makeShortcutLink(destinationNode);
         destinationNode.addLink(backLink);
         return destinationNode;

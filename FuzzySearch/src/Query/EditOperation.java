@@ -74,6 +74,15 @@ public enum EditOperation {
         return movement;
     }
 
+    public static double getRankDiscount(int numberOfEdits){
+        double operationDiscount = 1;
+        for(int i = 0; i < numberOfEdits; i++){
+            operationDiscount *= getOperationDiscount(EditOperation.Insert, i);
+        }
+
+        return operationDiscount;
+    }
+
     public static double getOperationDiscount(EditOperation editOperation, int previousEdits) {
         double discount = -1;
 
@@ -81,7 +90,7 @@ public enum EditOperation {
 
         switch (editOperation){
             case Insert:
-                discount = 0.5 / edits;
+                discount = 0.5/ edits;
                 break;
             case Delete:
                 discount = 0.5 / edits;
