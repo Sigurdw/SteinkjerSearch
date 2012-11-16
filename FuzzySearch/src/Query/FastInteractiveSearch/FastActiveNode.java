@@ -1,0 +1,278 @@
+package Query.FastInteractiveSearch;
+
+import DataStructure.Trie;
+import DocumentModel.IDocument;
+import Query.*;
+
+import java.util.ArrayList;
+import java.util.PriorityQueue;
+
+public class FastActiveNode {
+    private Trie<IDocument> queryPosition;
+    private int previousEdits;
+    private int queryStringIndex;
+    private EditOperation lastEditOperation;
+    private int nextChild = 0;
+    private boolean firstAdded = false;
+    private int nextSuggestion = 0;
+    private QueryString queryString;
+    private double editDiscount;
+    private boolean isSubstitution;
+
+    private final int MaxEdits = 10;
+
+    private FastActiveNode(
+            Trie<IDocument> queryPosition,
+            int previousEdits,
+            EditOperation lastEditOperation,
+            int queryStringIndex,
+            QueryString queryString,
+            double editDiscount,
+            boolean isSubstitution
+    )
+    {
+        this.queryPosition = queryPosition;
+        this.previousEdits = previousEdits;
+        this.lastEditOperation = lastEditOperation;
+        this.queryStringIndex = queryStringIndex;
+        this.queryString = queryString;
+        this.editDiscount = editDiscount;
+        this.isSubstitution = isSubstitution;
+    }
+
+    public FastActiveNode(
+            Trie<IDocument> rootNode,
+            QueryString queryString)
+    {
+        this(rootNode, 0, EditOperation.Match, 0, queryString, 1, false);
+    }
+
+    public void extractLinks(PriorityQueue<Link> linkQueue){
+        if(!firstAdded){
+            firstAdded = true;
+            AddMatchToList(linkQueue);
+            AddDeleteToList(linkQueue);
+            AddNextEditsToList(linkQueue);
+        }
+        else{
+
+        }
+    }
+
+    private void AddMatchToList(PriorityQueue<Link> linkQueue){
+        if(EditOperation.isOperationAllowed(lastEditOperation, EditOperation.Match)){
+            Trie<IDocument> match = getMatch();
+            System.out.println(match);
+            if(match != null){
+                double rank = getDiscountRank(match, EditOperation.getOperationDiscount(
+                        EditOperation.Match,
+                        previousEdits));
+                int movement = EditOperation.getOperationMovement(EditOperation.Match);
+                linkQueue.add(new MatchLink(
+                        rank,
+                        this,
+                        match,
+                        previousEdits,
+                        queryStringIndex + movement,
+                        editDiscount));
+            }
+        }
+    }
+
+    private void AddDeleteToList(PriorityQueue<Link> linkQueue){
+        if(canDelete()){
+            int cost = EditOperation.getOperationCost(lastEditOperation, EditOperation.Delete);
+            if(previousEdits + cost <= MaxEdits){
+                double modifier = 1;
+                if(cost != 0){
+                    modifier = EditOperation.getOperationDiscount(EditOperation.Delete, previousEdits);
+                }
+
+                int movement = EditOperation.getOperationMovement(EditOperation.Delete);
+
+                double deleteRank = getDiscountRank(
+                        queryPosition,
+                        modifier);
+                EditLink deleteLink = new EditLink(
+                        deleteRank,
+                        this,
+                        queryPosition,
+                        EditOperation.Delete,
+                        previousEdits + cost,
+                        queryStringIndex + movement,
+                        editDiscount * modifier,
+                        cost == 0);
+
+                linkQueue.add(deleteLink);
+            }
+        }
+    }
+
+    private boolean canDelete(){
+        return EditOperation.isOperationAllowed(lastEditOperation, EditOperation.Delete)
+                && (!(getMatch() != null && queryPosition.getSize() == 1)
+                || lastEditOperation == EditOperation.Insert);
+    }
+
+    private Trie<IDocument> getMatch(){
+        return queryPosition.getChildren().get(getCharacter());
+    }
+
+    private void AddNextEditsToList(PriorityQueue<Link> linkQueue) {
+        if(previousEdits + 1 <= MaxEdits){
+            EditLink insertLink = GetNextEditLink();
+            if(insertLink != null){
+                linkQueue.add(insertLink);
+            }
+        }
+    }
+
+    private EditLink GetNextEditLink(){
+        if(EditOperation.isOperationAllowed(lastEditOperation, EditOperation.Insert) || isSubstitution){
+            Trie<IDocument> bestEditNode = getNextEditNode();
+            if(bestEditNode != null){
+                double modifier = EditOperation.getOperationDiscount(EditOperation.Insert, previousEdits);
+                double rank = getDiscountRank(
+                        bestEditNode,
+                        modifier);
+
+                int cost = EditOperation.getOperationCost(lastEditOperation, EditOperation.Insert);
+                int movement = EditOperation.getOperationMovement(EditOperation.Insert);
+
+                return new EditLink(
+                        rank,
+                        this,
+                        bestEditNode,
+                        EditOperation.Insert,
+                        previousEdits + cost,
+                        queryStringIndex + movement,
+                        editDiscount * modifier,
+                        false);
+            }
+        }
+
+        return null;
+    }
+
+    private Trie<IDocument> getNextEditNode() {
+        Trie<IDocument> bestEditNode = null;
+        if(nextChild < queryPosition.getSize()){
+            bestEditNode = queryPosition.getOrderedChild(nextChild);
+            nextChild++;
+            Trie<IDocument> match = queryPosition.getChildren().get(getCharacter());
+            if(bestEditNode == match){
+                bestEditNode = null;
+                if(nextChild < queryPosition.getSize()){
+                    bestEditNode = queryPosition.getOrderedChild(nextChild);
+                    nextChild++;
+                }
+            }
+        }
+
+        return bestEditNode;
+    }
+
+    public void getSuggestions(
+            ArrayList<ISuggestionWrapper> suggestionsWrappers,
+            int neededSuggestions,
+            double rankThreshold)
+    {
+        int numberOfUsedSuggestions = 0;
+        ArrayList<Trie<IDocument>> suggestions = queryPosition.getCachedSuggestions();
+        for (
+                int i = nextSuggestion;
+                i < Math.min(nextSuggestion + neededSuggestions, suggestions.size());
+                i++)
+        {
+            Trie<IDocument> suggestionDocument = suggestions.get(i);
+            double suggestionRank = getDiscountRank(suggestionDocument, 1);
+            if(rankThreshold > suggestionRank){
+                break;
+            }
+
+            boolean hasSuggestion = false;
+            for(ISuggestionWrapper suggestionWrapper : suggestionsWrappers){
+                if(suggestionWrapper.getSuggestion().equals(suggestionDocument.getLabel())){
+                    hasSuggestion = true;
+                    break;
+                }
+            }
+
+            if(!hasSuggestion){
+                suggestionsWrappers.add(new SuggestionWrapper(suggestionDocument.getLabel(), suggestionRank));
+                numberOfUsedSuggestions++;
+            }
+            else{
+                nextSuggestion++;
+            }
+        }
+
+        nextSuggestion += numberOfUsedSuggestions;
+        System.out.println("Got these: " + suggestionsWrappers);
+    }
+
+    public double getRank() {
+        return getDiscountRank(queryPosition, 1);
+    }
+
+    private double getDiscountRank(Trie<IDocument> node, double modifier){
+        return node.getRank() * modifier * editDiscount;
+    }
+
+    public void maybyAddNextLink(EditOperation editOperation, PriorityQueue<Link> linkQueue){
+        if(editOperation == EditOperation.Insert){
+            AddNextEditsToList(linkQueue);
+        }
+    }
+
+    public FastActiveNode createChild(
+            Trie<IDocument> position,
+            EditOperation editOperation,
+            int numberOfEdits,
+            int queryStringIndex,
+            double editDiscount,
+            boolean isSubstitution)
+    {
+        return new FastActiveNode(
+                position,
+                numberOfEdits,
+                editOperation,
+                queryStringIndex,
+                queryString,
+                editDiscount,
+                isSubstitution
+        );
+    }
+
+    public SuggestionLink getSuggestionLink(){
+        return new SuggestionLink(
+                    getNextSuggestionRank(),
+                    queryString.GetLength(),
+                    this);
+    }
+
+    private double getNextSuggestionRank() {
+        if(nextSuggestion < queryPosition.getCachedSuggestions().size()){
+            return getDiscountRank(queryPosition.getCachedSuggestions().get(nextSuggestion), 1);
+        }
+        else{
+            return -2;
+        }
+    }
+
+    public String toString(){
+        return "Query.ActiveQuery: " + queryPosition.getLabel() + " Last operation: " + lastEditOperation + " previous edits: " + previousEdits + " rank: " + getRank();
+    }
+
+    public String getLabel() {
+        return queryPosition.getLabel();
+    }
+
+    private char getCharacter(){
+        return queryString.GetCharacter(queryStringIndex);
+    }
+
+    public boolean isExhausted() {
+        return queryString.IsExhausted(queryStringIndex);
+    }
+}

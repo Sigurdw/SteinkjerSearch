@@ -1,12 +1,15 @@
-package Query;
+package Query.FastInteractiveSearch;
 
 import DataStructure.Trie;
 import DocumentModel.IDocument;
+import Query.EditOperation;
+import Query.QueryString;
 
-public class EditLink extends Link implements IDiscardableLink {
+import java.util.PriorityQueue;
+
+public class EditLink extends Link {
     Trie<IDocument> position;
-    ActivePriorityNode sourceNode;
-    ActivePriorityNode newSourceNode = null;
+    FastActiveNode sourceNode;
     EditOperation editOperation;
     private int numberOfEdits;
     private int queryStringIndex;
@@ -15,7 +18,7 @@ public class EditLink extends Link implements IDiscardableLink {
 
     public EditLink(
             double rank,
-            ActivePriorityNode sourceNode,
+            FastActiveNode sourceNode,
             Trie<IDocument> position,
             EditOperation editOperation,
             int numberOfEdits,
@@ -34,33 +37,15 @@ public class EditLink extends Link implements IDiscardableLink {
     }
 
     @Override
-    public ActivePriorityNode UseLink() {
-        if(newSourceNode != null){
-            if(editOperation == EditOperation.Insert){
-                EditLink insertLink = sourceNode.stealNextEditLink();
-                if(insertLink != null){
-                    newSourceNode.addLink(insertLink);
-                }
-            }
-
-            return newSourceNode.createChild(
-                    position,
-                    editOperation,
-                    numberOfEdits,
-                    queryStringIndex,
-                    editDiscount,
-                    substitution);
-        }
-        else{
-            sourceNode.maybyAddNextActiveNode(editOperation);
-            return sourceNode.createChild(
-                    position,
-                    editOperation,
-                    numberOfEdits,
-                    queryStringIndex,
-                    editDiscount,
-                    substitution);
-        }
+    public FastActiveNode UseLink(PriorityQueue<Link> linkQueue) {
+        sourceNode.maybyAddNextLink(editOperation, linkQueue);
+        return sourceNode.createChild(
+                position,
+                editOperation,
+                numberOfEdits,
+                queryStringIndex,
+                editDiscount,
+                substitution);
     }
 
     public String toString(){
@@ -69,11 +54,6 @@ public class EditLink extends Link implements IDiscardableLink {
                 sourceNode.getLabel() +
                 " to " + position.getLabel() +
                 " " + super.toString();
-    }
-
-    @Override
-    public void setSource(ActivePriorityNode source) {
-        newSourceNode = source;
     }
 
     @Override

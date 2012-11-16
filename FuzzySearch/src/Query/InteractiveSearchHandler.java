@@ -21,12 +21,14 @@ public class InteractiveSearchHandler{
     }
 
     private void initInteractiveSearch() {
-        if(isPlain){
+        /*if(isPlain){
             query = index.initInteractiveSearch(queryString);
         }
         else{
             query = index.initFastInteractiveSearch(queryString);
-        }
+        }*/
+
+        query = index.initSearch(queryString, 4);
     }
 
 

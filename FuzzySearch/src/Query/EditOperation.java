@@ -85,7 +85,6 @@ public enum EditOperation {
 
     public static double getOperationDiscount(EditOperation editOperation, int previousEdits) {
         double discount = -1;
-
         int edits = previousEdits + 1;
 
         switch (editOperation){

@@ -3,6 +3,8 @@ package Index;
 import DataStructure.Trie;
 import DocumentModel.IDocument;
 import Query.*;
+import Query.FastInteractiveSearch.FastActiveNode;
+import Query.FastInteractiveSearch.FastTrieTraverser;
 
 import java.util.ArrayList;
 
@@ -23,12 +25,17 @@ public class Index {
         return indexImplementation.getSuggestions(partialKey);
     }
 
-    public NaiveTrieTraverser initInteractiveSearch(QueryString queryString){
+    public NaiveTrieTraverser initInteractiveSearch(QueryString queryString, int numberOfSuggestions){
         ActiveQuery activeQuery = new ActiveQuery(indexImplementation, 1, EditOperation.Match, queryString, 0, false);
-        return new NaiveTrieTraverser(activeQuery);
+        return new NaiveTrieTraverser(activeQuery, numberOfSuggestions);
     }
 
-    public TriePriorityTraverser initFastInteractiveSearch(QueryString queryString){
+    public TriePriorityTraverser initFastInteractiveSearch(QueryString queryString, int numberOfSuggestions){
         return new TriePriorityTraverser(indexImplementation, queryString);
+    }
+
+    public ITrieTraverser initSearch(QueryString queryString, int numberOfSuggestions) {
+        FastActiveNode activeNode = new FastActiveNode(indexImplementation, queryString);
+        return new FastTrieTraverser(activeNode, queryString, numberOfSuggestions);
     }
 }
