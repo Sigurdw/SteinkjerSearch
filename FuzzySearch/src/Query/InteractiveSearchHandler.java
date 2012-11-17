@@ -28,7 +28,7 @@ public class InteractiveSearchHandler{
             query = index.initFastInteractiveSearch(queryString);
         }*/
 
-        query = index.initSearch(queryString, 4);
+        query = index.initSearch(queryString, 10, 3);
     }
 
 

@@ -21,20 +21,32 @@ public class FastTrieTraverser implements ITrieTraverser {
     public ArrayList<ISuggestionWrapper> addCharacter() {
         ArrayList<ISuggestionWrapper> suggestions = new ArrayList<ISuggestionWrapper>();
         initiateFromExhaustedNodes();
-        Link nextLink = linkQueue.poll();
+        Link nextLink = getNextLink();
         int iterationNumber = 1;
         while(neededSuggestions - suggestions.size() > 0 && nextLink != null){
             System.out.println("Iteration " + iterationNumber + " on " + queryString.GetLastCharacter());
+            System.out.println(nextLink);
             FastActiveNode currentNode = nextLink.UseLink(linkQueue);
             if(currentNode.isExhausted()){
+                double thresholdRank = 0;
+                Link thresholdLink = linkQueue.peek();
+                if(thresholdLink != null){
+                    thresholdRank = thresholdLink.getRank();
+                }
+
                 currentNode.getSuggestions(
                         suggestions,
                         neededSuggestions - suggestions.size(),
-                        linkQueue.peek().getRank());
+                        thresholdRank);
 
                 SuggestionLink suggestionLink = currentNode.getSuggestionLink();
-                linkQueue.add(suggestionLink);
-                exhaustedNodes.add(currentNode);
+                if(suggestionLink != null){
+                    linkQueue.add(suggestionLink);
+                }
+
+                if(!exhaustedNodes.contains(currentNode)){
+                    exhaustedNodes.add(currentNode);
+                }
             }
             else{
                 currentNode.extractLinks(linkQueue);
@@ -44,13 +56,22 @@ public class FastTrieTraverser implements ITrieTraverser {
                 break;
             }
 
-            nextLink = linkQueue.poll();
+            nextLink = getNextLink();
             iterationNumber++;
         }
 
         System.out.println("Done in " + iterationNumber);
 
         return suggestions;
+    }
+
+    private Link getNextLink() {
+        Link nextLink = linkQueue.poll();
+        while(nextLink != null && !nextLink.isValid(queryString)){
+            nextLink = linkQueue.poll();
+        }
+
+        return nextLink;
     }
 
     private void initiateFromExhaustedNodes() {

@@ -19,7 +19,7 @@ public class FastActiveNode {
     private double editDiscount;
     private boolean isSubstitution;
 
-    private final int MaxEdits = 10;
+    private final int maxEdits;
 
     private FastActiveNode(
             Trie<IDocument> queryPosition,
@@ -28,7 +28,8 @@ public class FastActiveNode {
             int queryStringIndex,
             QueryString queryString,
             double editDiscount,
-            boolean isSubstitution
+            boolean isSubstitution,
+            int maxEdits
     )
     {
         this.queryPosition = queryPosition;
@@ -38,13 +39,15 @@ public class FastActiveNode {
         this.queryString = queryString;
         this.editDiscount = editDiscount;
         this.isSubstitution = isSubstitution;
+        this.maxEdits = maxEdits;
     }
 
     public FastActiveNode(
             Trie<IDocument> rootNode,
-            QueryString queryString)
+            QueryString queryString,
+            int maxEdits)
     {
-        this(rootNode, 0, EditOperation.Match, 0, queryString, 1, false);
+        this(rootNode, 0, EditOperation.Match, 0, queryString, 1, false, maxEdits);
     }
 
     public void extractLinks(PriorityQueue<Link> linkQueue){
@@ -53,9 +56,6 @@ public class FastActiveNode {
             AddMatchToList(linkQueue);
             AddDeleteToList(linkQueue);
             AddNextEditsToList(linkQueue);
-        }
-        else{
-
         }
     }
 
@@ -82,7 +82,7 @@ public class FastActiveNode {
     private void AddDeleteToList(PriorityQueue<Link> linkQueue){
         if(canDelete()){
             int cost = EditOperation.getOperationCost(lastEditOperation, EditOperation.Delete);
-            if(previousEdits + cost <= MaxEdits){
+            if(previousEdits + cost <= maxEdits){
                 double modifier = 1;
                 if(cost != 0){
                     modifier = EditOperation.getOperationDiscount(EditOperation.Delete, previousEdits);
@@ -119,7 +119,7 @@ public class FastActiveNode {
     }
 
     private void AddNextEditsToList(PriorityQueue<Link> linkQueue) {
-        if(previousEdits + 1 <= MaxEdits){
+        if(previousEdits + 1 <= maxEdits){
             EditLink insertLink = GetNextEditLink();
             if(insertLink != null){
                 linkQueue.add(insertLink);
@@ -240,15 +240,21 @@ public class FastActiveNode {
                 queryStringIndex,
                 queryString,
                 editDiscount,
-                isSubstitution
+                isSubstitution,
+                maxEdits
         );
     }
 
     public SuggestionLink getSuggestionLink(){
-        return new SuggestionLink(
+        double rank = getNextSuggestionRank();
+        if(rank >= 0){
+            return new SuggestionLink(
                     getNextSuggestionRank(),
                     queryString.GetLength(),
                     this);
+        }
+
+        return null;
     }
 
     private double getNextSuggestionRank() {

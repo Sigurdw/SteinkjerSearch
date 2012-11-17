@@ -34,8 +34,8 @@ public class Index {
         return new TriePriorityTraverser(indexImplementation, queryString);
     }
 
-    public ITrieTraverser initSearch(QueryString queryString, int numberOfSuggestions) {
-        FastActiveNode activeNode = new FastActiveNode(indexImplementation, queryString);
+    public ITrieTraverser initSearch(QueryString queryString, int numberOfSuggestions, int maxEdits) {
+        FastActiveNode activeNode = new FastActiveNode(indexImplementation, queryString, maxEdits);
         return new FastTrieTraverser(activeNode, queryString, numberOfSuggestions);
     }
 }

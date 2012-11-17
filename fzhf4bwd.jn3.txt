@@ -1,0 +1,27 @@
+
+# Please enter the commit message for your changes. Lines starting
+# with '#' will be ignored, and an empty message aborts the commit.
+# On branch master
+# Changes to be committed:
+#   (use "git reset HEAD <file>..." to unstage)
+#
+#	deleted:    FuzzySearch/src/Query/ActiveQueryPosition.java
+#	deleted:    FuzzySearch/src/Query/FastInteractiveSearch/BackLink.java
+#
+# Changes not staged for commit:
+#   (use "git add/rm <file>..." to update what will be committed)
+#   (use "git checkout -- <file>..." to discard changes in working directory)
+#
+#	modified:   FuzzySearch/.idea/workspace.xml
+#	modified:   FuzzySearch/out/production/FuzzySearch/Index/Index.class
+#	deleted:    FuzzySearch/out/production/FuzzySearch/Query/ActiveQueryPosition.class
+#	deleted:    FuzzySearch/out/production/FuzzySearch/Query/FastInteractiveSearch/BackLink.class
+#	modified:   FuzzySearch/out/production/FuzzySearch/Query/FastInteractiveSearch/FastActiveNode.class
+#	modified:   FuzzySearch/out/production/FuzzySearch/Query/FastInteractiveSearch/FastTrieTraverser.class
+#	modified:   FuzzySearch/out/production/FuzzySearch/Query/InteractiveSearchHandler.class
+#	modified:   FuzzySearch/src/Index/Index.java
+#	modified:   FuzzySearch/src/Query/FastInteractiveSearch/FastActiveNode.java
+#	modified:   FuzzySearch/src/Query/FastInteractiveSearch/FastTrieTraverser.java
+#	modified:   FuzzySearch/src/Query/InteractiveSearchHandler.java
+#
+
