@@ -40,10 +40,6 @@ public class ActiveQuery {
     public void addCharacter(ArrayList<ActiveQuery> activeQueries){
         Map<Character, Trie<IDocument>> candidateQueryPositions = queryPosition.getChildren();
 
-        if(getLabel().equals("pr")){
-            System.out.println("VERBOSE: " + this + queryString.GetCharacter(queryStringIndex) + ", " + queryString.GetLastCharacter());
-        }
-
         for(Character candidatePath : candidateQueryPositions.keySet()){
             Trie<IDocument> newQueryPosition = candidateQueryPositions.get(candidatePath);
             if(candidatePath == queryString.GetCharacter(queryStringIndex)){

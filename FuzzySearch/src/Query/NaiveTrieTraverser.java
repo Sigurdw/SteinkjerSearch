@@ -21,8 +21,6 @@ public class NaiveTrieTraverser implements ITrieTraverser {
             activeQuery.addCharacter(nextActiveQueries);
         }
 
-        System.out.println(nextActiveQueries);
-
         ArrayList<ISuggestionWrapper> suggestions = new ArrayList<ISuggestionWrapper>();
         for(ActiveQuery activeQuery : nextActiveQueries){
             activeQuery.getSuggestions(suggestions);

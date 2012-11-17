@@ -76,7 +76,7 @@ public enum EditOperation {
 
     public static double getRankDiscount(int numberOfEdits){
         double operationDiscount = 1;
-        for(int i = 0; i < numberOfEdits; i++){
+        for(int i = 1; i <= numberOfEdits; i++){
             operationDiscount *= getOperationDiscount(EditOperation.Insert, i);
         }
 
