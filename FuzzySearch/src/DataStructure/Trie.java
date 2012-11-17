@@ -1,31 +1,35 @@
 package DataStructure;
 
-import Index.Indexer;
-import Query.ISuggestionWrapper;
-
 import java.util.*;
 
 public class Trie<T> implements Comparable<Trie<T>> {
     private ArrayList<T> dataList = new ArrayList<T>();
     private Map<Character, Trie<T>> children = new HashMap<Character, Trie<T>>();
-    private ArrayList<Trie<T>> rankSortedChildren = new ArrayList<Trie<T>>();
+    private ArrayList<Trie<T>> rankSortedChildren;
     private String label;
     private ArrayList<Trie<T>> suggestionCache = new ArrayList<Trie<T>>();
-    private int cacheSize = 10;
+    private int cacheSize;
+    private boolean hasSortedIndex;
     private int termFrequency = 0;
 
     private double rank;
 
-    public Trie(){
-        this.label = "";
+    public Trie(int cacheSize, boolean hasSortedIndex){
+        this("", cacheSize, hasSortedIndex);
     }
 
-    public Trie(String label){
+    private Trie(String label, int cacheSize, boolean hasSortedIndex){
         this.label = label;
+        this.cacheSize = cacheSize;
+        this.hasSortedIndex = hasSortedIndex;
+        if(hasSortedIndex){
+            rankSortedChildren = new ArrayList<Trie<T>>();
+        }
     }
 
     public void addKeyDataPair(String key, T data){
         addKeyDataPair(key, data, 0);
+
     }
 
     private Trie<T> addKeyDataPair(String key, T data, int depth){
@@ -49,20 +53,29 @@ public class Trie<T> implements Comparable<Trie<T>> {
                 addedTrie = child.addKeyDataPair(key, data, depth + 1);
             }
             else{
-                child = new Trie<T>(label + childKey);
+                child = new Trie<T>(label + childKey, cacheSize, hasSortedIndex);
                 addedTrie = child.addKeyDataPair(key, data, depth + 1);
                 children.put(childKey, child);
-                rankSortedChildren.add(child);
+                if(hasSortedIndex){
+                    rankSortedChildren.add(child);
+                }
             }
 
-            //This should be changed (too expensice):
-            Collections.sort(rankSortedChildren);
-            rank = rankSortedChildren.get(0).getRank();
+            rank = Math.max(rank, child.getRank()); // = rankSortedChildren.get(0).getRank();
         }
 
         maybeAddTrieToCache(addedTrie);
 
         return addedTrie;
+    }
+
+    public void sortData(){
+        if(hasSortedIndex){
+            Collections.sort(rankSortedChildren);
+            for(Trie<T> child : children.values()){
+                child.sortData();
+            }
+        }
     }
 
     public Trie<T> getOrderedChild(int index){
@@ -159,10 +172,6 @@ public class Trie<T> implements Comparable<Trie<T>> {
         }
 
         return results;
-    }
-
-    public ArrayList<T> getData() {
-        return dataList;
     }
 
     public double getRank(){

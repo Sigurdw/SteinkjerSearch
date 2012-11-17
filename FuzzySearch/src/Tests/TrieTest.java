@@ -14,7 +14,7 @@ import java.util.ArrayList;
 * To change this template use File | Settings | File Templates.
 */
 public class TrieTest {
-    Trie<Object> trie = new Trie<Object>();
+    Trie<Object> trie = new Trie<Object>(4, true);
 
     @Test
     public void testAddKeyDataPair() throws Exception {

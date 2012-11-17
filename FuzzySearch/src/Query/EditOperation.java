@@ -84,22 +84,24 @@ public enum EditOperation {
     }
 
     public static double getOperationDiscount(EditOperation editOperation, int previousEdits) {
-        double discount = -1;
-        int edits = previousEdits + 1;
+        double discount = 1;
 
-        switch (editOperation){
-            case Insert:
-                discount = 0.5/ edits;
-                break;
-            case Delete:
-                discount = 0.5 / edits;
-                break;
-            case Match:
-                discount = 1;
-                break;
-            case Substitution:
-                discount = 0.5 / edits;
-                break;
+        if(previousEdits > 0){
+            int edits = previousEdits;
+            switch (editOperation){
+                case Insert:
+                    discount = 0.5/ edits;
+                    break;
+                case Delete:
+                    discount = 0.5 / edits;
+                    break;
+                case Match:
+                    discount = 1;
+                    break;
+                case Substitution:
+                    discount = 0.5 / edits;
+                    break;
+            }
         }
 
         return discount;

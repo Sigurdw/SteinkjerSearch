@@ -85,7 +85,9 @@ public class FastActiveNode {
             if(previousEdits + cost <= maxEdits){
                 double modifier = 1;
                 if(cost != 0){
-                    modifier = EditOperation.getOperationDiscount(EditOperation.Delete, previousEdits);
+                    modifier = EditOperation.getOperationDiscount(
+                            EditOperation.Delete,
+                            previousEdits + cost);
                 }
 
                 int movement = EditOperation.getOperationMovement(EditOperation.Delete);
@@ -131,7 +133,7 @@ public class FastActiveNode {
         if(EditOperation.isOperationAllowed(lastEditOperation, EditOperation.Insert) || isSubstitution){
             Trie<IDocument> bestEditNode = getNextEditNode();
             if(bestEditNode != null){
-                double modifier = EditOperation.getOperationDiscount(EditOperation.Insert, previousEdits);
+                double modifier = EditOperation.getOperationDiscount(EditOperation.Insert, previousEdits + 1);
                 double rank = getDiscountRank(
                         bestEditNode,
                         modifier);

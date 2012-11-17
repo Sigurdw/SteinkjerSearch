@@ -9,14 +9,17 @@ import java.util.List;
 public class Indexer {
 
     public static int NumberOfDocuments = 0;
+    private int suggestionCacheSize;
+    private boolean hasSortedIndex;
 
-    public Indexer(){
-
+    public Indexer(int suggestionCacheSize, boolean hasSortedIndex){
+        this.suggestionCacheSize = suggestionCacheSize;
+        this.hasSortedIndex = hasSortedIndex;
     }
 
     public Index indexDocuments(ArrayList<IDocument> documents){
         NumberOfDocuments = documents.size();
-        Trie<IDocument> indexImplementation = new Trie<IDocument>();
+        Trie<IDocument> indexImplementation = new Trie<IDocument>(suggestionCacheSize, hasSortedIndex);
         for(IDocument document : documents){
             List<String> tokens = document.getTokens();
             List<String> indexTerms = getIndexTerms(tokens);
@@ -25,6 +28,7 @@ public class Indexer {
             }
         }
 
+        indexImplementation.sortData();
         System.out.println(
                 "Successfully indexed " + indexImplementation.getNumberOfEntries() + " different index terms.");
         return new Index(indexImplementation);

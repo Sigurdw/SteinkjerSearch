@@ -8,27 +8,33 @@ public class InteractiveSearchHandler{
 
     private String activeQueryString = "";
     private Index index;
+    private int numberOfSuggestionsRequired;
+    private boolean usePrioritySearch;
+    private int allowedEditDistance;
     private ITrieTraverser query;
     private ArrayList<ISuggestionWrapper> suggestions = new ArrayList<ISuggestionWrapper>();
     private QueryString queryString = new QueryString();
 
-    private boolean isPlain = false;
-
-
-    public InteractiveSearchHandler(Index index){
+    public InteractiveSearchHandler(
+            Index index,
+            int numberOfSuggestionsRequired,
+            boolean usePrioritySearch,
+            int allowedEditDistance)
+    {
         this.index = index;
+        this.numberOfSuggestionsRequired = numberOfSuggestionsRequired;
+        this.usePrioritySearch = usePrioritySearch;
+        this.allowedEditDistance = allowedEditDistance;
         initInteractiveSearch();
     }
 
     private void initInteractiveSearch() {
-        /*if(isPlain){
-            query = index.initInteractiveSearch(queryString);
+        if(usePrioritySearch){
+            query = index.initFastSearch(queryString, numberOfSuggestionsRequired, allowedEditDistance);
         }
         else{
-            query = index.initFastInteractiveSearch(queryString);
-        }*/
-
-        query = index.initSearch(queryString, 10, 3);
+            query = index.initSearch(queryString, numberOfSuggestionsRequired, allowedEditDistance);
+        }
     }
 
 
@@ -61,8 +67,8 @@ public class InteractiveSearchHandler{
 
     public ArrayList<String> getSearchResults() {
         ArrayList<String> suggestionStrings = new ArrayList<String>(suggestions.size());
-        for (ISuggestionWrapper suggestion : suggestions){
-            suggestionStrings.add(suggestion.toString());
+        for (int i = 0; i < Math.min(numberOfSuggestionsRequired, suggestions.size()); i++){
+            suggestionStrings.add(suggestions.get(i).toString());
         }
 
         return suggestionStrings;

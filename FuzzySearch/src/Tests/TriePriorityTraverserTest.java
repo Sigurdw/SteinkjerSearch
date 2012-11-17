@@ -10,7 +10,7 @@ import java.util.ArrayList;
 
 public class TriePriorityTraverserTest {
 
-    private Trie<IDocument> root = new Trie<IDocument>();
+    private Trie<IDocument> root = new Trie<IDocument>(4, true);
 
 
     @Test

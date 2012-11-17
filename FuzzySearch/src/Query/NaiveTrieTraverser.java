@@ -21,6 +21,8 @@ public class NaiveTrieTraverser implements ITrieTraverser {
             activeQuery.addCharacter(nextActiveQueries);
         }
 
+        System.out.println(nextActiveQueries);
+
         ArrayList<ISuggestionWrapper> suggestions = new ArrayList<ISuggestionWrapper>();
         for(ActiveQuery activeQuery : nextActiveQueries){
             activeQuery.getSuggestions(suggestions);
@@ -30,6 +32,7 @@ public class NaiveTrieTraverser implements ITrieTraverser {
 
         activeQueries = nextActiveQueries;
         System.out.println("Iteration completed: " + activeQueries.size());
+
         return suggestions;
     }
 }

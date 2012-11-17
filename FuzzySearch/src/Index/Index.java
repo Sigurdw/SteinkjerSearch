@@ -25,17 +25,16 @@ public class Index {
         return indexImplementation.getSuggestions(partialKey);
     }
 
-    public NaiveTrieTraverser initInteractiveSearch(QueryString queryString, int numberOfSuggestions){
-        ActiveQuery activeQuery = new ActiveQuery(indexImplementation, 1, EditOperation.Match, queryString, 0, false);
+    public NaiveTrieTraverser initSearch(
+            QueryString queryString,
+            int numberOfSuggestions,
+            int allowedEditDistance){
+        ActiveQuery activeQuery = new ActiveQuery(indexImplementation, queryString, allowedEditDistance);
         return new NaiveTrieTraverser(activeQuery, numberOfSuggestions);
     }
 
-    public TriePriorityTraverser initFastInteractiveSearch(QueryString queryString, int numberOfSuggestions){
-        return new TriePriorityTraverser(indexImplementation, queryString);
-    }
-
-    public ITrieTraverser initSearch(QueryString queryString, int numberOfSuggestions, int maxEdits) {
-        FastActiveNode activeNode = new FastActiveNode(indexImplementation, queryString, maxEdits);
+    public ITrieTraverser initFastSearch(QueryString queryString, int numberOfSuggestions, int allowedEditDistance) {
+        FastActiveNode activeNode = new FastActiveNode(indexImplementation, queryString, allowedEditDistance);
         return new FastTrieTraverser(activeNode, queryString, numberOfSuggestions);
     }
 }

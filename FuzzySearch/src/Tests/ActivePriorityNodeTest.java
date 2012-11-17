@@ -10,7 +10,7 @@ import org.junit.Test;
 import java.util.ArrayList;
 
 public class ActivePriorityNodeTest {
-    Trie<IDocument> root = new Trie<IDocument>();
+    Trie<IDocument> root = new Trie<IDocument>(4, true);
 
     @Test
     public void testIsExhausted() throws Exception {
