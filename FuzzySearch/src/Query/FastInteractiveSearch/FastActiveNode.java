@@ -62,7 +62,7 @@ public class FastActiveNode {
     private void AddMatchToList(PriorityQueue<Link> linkQueue){
         if(EditOperation.isOperationAllowed(lastEditOperation, EditOperation.Match)){
             Trie<IDocument> match = getMatch();
-            System.out.println(match);
+            //System.out.println(match);
             if(match != null){
                 double rank = getDiscountRank(match, EditOperation.getOperationDiscount(
                         EditOperation.Match,
@@ -210,7 +210,7 @@ public class FastActiveNode {
         }
 
         nextSuggestion += numberOfUsedSuggestions;
-        System.out.println("Got these: " + suggestionsWrappers);
+        //System.out.println("Got these: " + suggestionsWrappers);
     }
 
     public double getRank() {

@@ -15,7 +15,7 @@ public class NaiveTrieTraverser implements ITrieTraverser {
 
     @Override
     public ArrayList<ISuggestionWrapper> addCharacter() {
-        System.out.println("Iteration on " + activeQueries.size() + " active nodes.");
+        //System.out.println("Iteration on " + activeQueries.size() + " active nodes.");
         ArrayList<ActiveQuery> nextActiveQueries = new ArrayList<ActiveQuery>();
         for(ActiveQuery activeQuery : activeQueries){
             activeQuery.addCharacter(nextActiveQueries);

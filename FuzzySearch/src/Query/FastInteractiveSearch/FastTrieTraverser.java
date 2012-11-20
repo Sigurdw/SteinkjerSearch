@@ -24,8 +24,7 @@ public class FastTrieTraverser implements ITrieTraverser {
         Link nextLink = getNextLink();
         int iterationNumber = 1;
         while(neededSuggestions - suggestions.size() > 0 && nextLink != null){
-            System.out.println("Iteration " + iterationNumber + " on " + queryString.GetLastCharacter());
-            System.out.println(nextLink);
+            //System.out.println("Iteration " + iterationNumber + " on " + queryString.GetLastCharacter());
             FastActiveNode currentNode = nextLink.UseLink(linkQueue);
             if(currentNode.isExhausted()){
                 double thresholdRank = 0;

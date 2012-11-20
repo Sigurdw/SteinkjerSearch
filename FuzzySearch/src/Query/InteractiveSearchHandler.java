@@ -42,9 +42,9 @@ public class InteractiveSearchHandler{
         queryString.SetQueryString(queryStr);
         char lastCharacter = queryString.GetLastCharacter();
         if(lastCharacter != 0){
-            System.out.println("Got: " + lastCharacter);
+            //System.out.println("Got: " + lastCharacter);
             suggestions = query.addCharacter();
-            System.out.println(suggestions);
+            //System.out.println(suggestions);
         }
         else{
             suggestions = new ArrayList<ISuggestionWrapper>();

@@ -4,6 +4,7 @@ import DataStructure.Trie;
 import DocumentModel.IDocument;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 public class Indexer {
@@ -20,18 +21,20 @@ public class Indexer {
     public Index indexDocuments(ArrayList<IDocument> documents){
         NumberOfDocuments = documents.size();
         Trie<IDocument> indexImplementation = new Trie<IDocument>(suggestionCacheSize, hasSortedIndex);
+        HashSet<String> indexTermSet = new HashSet<String>();
         for(IDocument document : documents){
             List<String> tokens = document.getTokens();
             List<String> indexTerms = getIndexTerms(tokens);
             for(String indexTerm : indexTerms){
                 indexImplementation.addKeyDataPair(indexTerm, document);
+                indexTermSet.add(indexTerm);
             }
         }
 
         indexImplementation.sortData();
         System.out.println(
                 "Successfully indexed " + indexImplementation.getNumberOfEntries() + " different index terms.");
-        return new Index(indexImplementation);
+        return new Index(indexImplementation, indexTermSet);
     }
 
     private List<String> getIndexTerms(List<String> tokens) {
