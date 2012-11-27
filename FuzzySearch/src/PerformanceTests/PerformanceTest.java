@@ -26,19 +26,22 @@ public class PerformanceTest {
 
     public void runTest(){
         ArrayList<String> terms = index.getRandomIndexTerms(30);
-        ArrayList<String> modifiedTerms = TermModifier.introduceModifications(terms, 3);
+        ArrayList<String> modifiedTerms = TermModifier.introduceModifications(terms, 2);
         long totalNaiveTime = 0;
         long totalPriorityTime = 0;
         for(String modifiedTerm : modifiedTerms){
             System.out.println("Doing naive search for " + modifiedTerm);
-            InteractiveSearchHandler naiveSearchHandler = new InteractiveSearchHandler(index, 10, false, 3);
+            InteractiveSearchHandler naiveSearchHandler = new InteractiveSearchHandler(index, 10, false, 2);
             long naiveTime = doInteractiveSearch(naiveSearchHandler, modifiedTerm);
+            System.out.println(naiveSearchHandler.getSearchResults());
 
             System.out.println();
 
             System.out.println("Doing priority search for " + modifiedTerm);
-            InteractiveSearchHandler prioritySearchHandler = new InteractiveSearchHandler(index, 10, true, 3);
+            InteractiveSearchHandler prioritySearchHandler = new InteractiveSearchHandler(index, 10, true, 2);
             long priorityTime = doInteractiveSearch(prioritySearchHandler, modifiedTerm);
+
+            System.out.println(prioritySearchHandler.getSearchResults());
 
             System.out.println("Naive time: " + naiveTime + " , Priority time " + priorityTime + ", Difference: " + (naiveTime - priorityTime) + " ,Percentage: " + (100 * ((double)priorityTime / (double)naiveTime)));
 
