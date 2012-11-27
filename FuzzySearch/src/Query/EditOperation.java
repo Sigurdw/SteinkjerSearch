@@ -90,16 +90,16 @@ public enum EditOperation {
             int edits = previousEdits;
             switch (editOperation){
                 case Insert:
-                    discount = 0.5/ edits;
+                    discount = 0.33/ edits;
                     break;
                 case Delete:
-                    discount = 0.5 / edits;
+                    discount = 0.33 / edits;
                     break;
                 case Match:
                     discount = 1;
                     break;
                 case Substitution:
-                    discount = 0.5 / edits;
+                    discount = 0.33 / edits;
                     break;
             }
         }

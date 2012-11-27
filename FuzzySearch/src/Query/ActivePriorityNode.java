@@ -269,7 +269,7 @@ public class ActivePriorityNode {
     }
 
     public void getSuggestions(ArrayList<ISuggestionWrapper> suggestionsWrappers, int neededSuggestions){
-        int numberOfUsedSuggestions = 0;
+        /*int numberOfUsedSuggestions = 0;
         ArrayList<Trie<IDocument>> suggestions = queryPosition.getCachedSuggestions();
         for (int i = nextSuggestion; i < Math.min(nextSuggestion + neededSuggestions, suggestions.size()); i++){
             Trie<IDocument> suggestionDocument = suggestions.get(i);
@@ -296,7 +296,7 @@ public class ActivePriorityNode {
         }
 
         nextSuggestion += numberOfUsedSuggestions;
-        System.out.println("Got these: " + suggestionsWrappers);
+        System.out.println("Got these: " + suggestionsWrappers);*/
     }
 
     public double getRank() {
@@ -369,12 +369,13 @@ public class ActivePriorityNode {
     }
 
     private double getNextSuggestionRank() {
-        if(nextSuggestion < queryPosition.getCachedSuggestions().size()){
+        /*if(nextSuggestion < queryPosition.getCachedSuggestions().size()){
             return getDiscountRank(queryPosition.getCachedSuggestions().get(nextSuggestion), 1);
         }
         else{
             return -2;
-        }
+        }*/
+        return  - 1000;
     }
 
     private double getNextRank(){

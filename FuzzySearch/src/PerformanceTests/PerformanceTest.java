@@ -25,7 +25,7 @@ public class PerformanceTest {
     }
 
     public void runTest(){
-        ArrayList<String> terms = index.getRandomIndexTerms(30);
+        ArrayList<String> terms = index.getRandomIndexTerms(100);
         ArrayList<String> modifiedTerms = TermModifier.introduceModifications(terms, 2);
         long totalNaiveTime = 0;
         long totalPriorityTime = 0;

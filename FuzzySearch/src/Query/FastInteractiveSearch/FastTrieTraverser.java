@@ -11,6 +11,8 @@ public class FastTrieTraverser implements ITrieTraverser {
     private int neededSuggestions;
     private PriorityQueue<Link> linkQueue = new PriorityQueue<Link>();
     private ArrayList<FastActiveNode> exhaustedNodes = new ArrayList<FastActiveNode>();
+    private int currentNodeVisitations = 0;
+    private int totalNodeVisitations = 0;
 
     public FastTrieTraverser(FastActiveNode rootActiveNode, QueryString queryString, int neededSuggestions){
         this.queryString = queryString;
@@ -22,9 +24,8 @@ public class FastTrieTraverser implements ITrieTraverser {
         ArrayList<ISuggestionWrapper> suggestions = new ArrayList<ISuggestionWrapper>();
         initiateFromExhaustedNodes();
         Link nextLink = getNextLink();
-        int iterationNumber = 1;
+        currentNodeVisitations = 1;
         while(neededSuggestions - suggestions.size() > 0 && nextLink != null){
-            //System.out.println("Iteration " + iterationNumber + " on " + queryString.GetLastCharacter());
             FastActiveNode currentNode = nextLink.UseLink(linkQueue);
             if(currentNode.isExhausted()){
                 double thresholdRank = 0;
@@ -37,7 +38,6 @@ public class FastTrieTraverser implements ITrieTraverser {
                         suggestions,
                         neededSuggestions - suggestions.size(),
                         thresholdRank);
-
                 SuggestionLink suggestionLink = currentNode.getSuggestionLink();
                 if(suggestionLink != null){
                     linkQueue.add(suggestionLink);
@@ -56,12 +56,22 @@ public class FastTrieTraverser implements ITrieTraverser {
             }
 
             nextLink = getNextLink();
-            iterationNumber++;
+            currentNodeVisitations++;
         }
 
-        System.out.println("Done in " + iterationNumber);
-
+        totalNodeVisitations += currentNodeVisitations;
+        //System.out.println("Done in " + currentNodeVisitations);
         return suggestions;
+    }
+
+    @Override
+    public int getNumberOfNodesInLastIteration() {
+        return currentNodeVisitations;
+    }
+
+    @Override
+    public int getTotalNodes() {
+        return totalNodeVisitations;
     }
 
     private Link getNextLink() {

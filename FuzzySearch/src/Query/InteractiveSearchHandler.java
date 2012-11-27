@@ -73,4 +73,12 @@ public class InteractiveSearchHandler{
 
         return suggestionStrings;
     }
+
+    public int getNumberOfNodesInLastIteration(){
+        return query.getNumberOfNodesInLastIteration();
+    }
+
+    public int getTotalNodes(){
+        return query.getTotalNodes();
+    }
 }

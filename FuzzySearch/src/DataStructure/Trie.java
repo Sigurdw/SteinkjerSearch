@@ -7,12 +7,13 @@ public class Trie<T> implements Comparable<Trie<T>> {
     private Map<Character, Trie<T>> children = new HashMap<Character, Trie<T>>();
     private ArrayList<Trie<T>> rankSortedChildren;
     private String label;
-    private ArrayList<Trie<T>> suggestionCache = new ArrayList<Trie<T>>();
+    private ArrayList<SuggestionCacheWrapper<T>> suggestionCache = new ArrayList<SuggestionCacheWrapper<T>>();
     private int cacheSize;
     private boolean hasSortedIndex;
     private int termFrequency = 0;
 
-    private double rank;
+    private double rank = 0;
+    private double selfRank = 0;
 
     public Trie(int cacheSize, boolean hasSortedIndex){
         this("", cacheSize, hasSortedIndex);
@@ -41,7 +42,8 @@ public class Trie<T> implements Comparable<Trie<T>> {
             }
 
             termFrequency++;
-            rank = (double)termFrequency / (double)dataList.size();
+            selfRank = (double)termFrequency / (double)dataList.size();
+            rank = Math.max(selfRank, rank);
 
             addedTrie = this;
         }
@@ -51,6 +53,14 @@ public class Trie<T> implements Comparable<Trie<T>> {
             if(children.containsKey(childKey)){
                 child = children.get(childKey);
                 addedTrie = child.addKeyDataPair(key, data, depth + 1);
+                double largestChildRank = child.getRank();
+                for(Trie<T> c : children.values()){
+                    if(c.getRank() > largestChildRank){
+                        largestChildRank = c.getRank();
+                    }
+                }
+
+                rank = Math.max(largestChildRank, selfRank);
             }
             else{
                 child = new Trie<T>(label + childKey, cacheSize, hasSortedIndex);
@@ -59,14 +69,25 @@ public class Trie<T> implements Comparable<Trie<T>> {
                 if(hasSortedIndex){
                     rankSortedChildren.add(child);
                 }
-            }
 
-            rank = Math.max(rank, child.getRank()); // = rankSortedChildren.get(0).getRank();
+                rank = Math.max(rank, child.getRank());
+            }
         }
 
         maybeAddTrieToCache(addedTrie);
-
         return addedTrie;
+    }
+
+    public double getLargestRankInSubTree(){
+        double ownRank = rank;
+        for(Trie<T> child : children.values()){
+            double childRank = child.getLargestRankInSubTree();
+            if(childRank >= ownRank){
+                ownRank = childRank;
+            }
+        }
+
+        return ownRank;
     }
 
     public void sortData(){
@@ -87,8 +108,9 @@ public class Trie<T> implements Comparable<Trie<T>> {
     }
 
     private void maybeAddTrieToCache(Trie<T> addedTrie) {
-        if(!suggestionCache.contains(addedTrie)){
-            suggestionCache.add(addedTrie);
+        SuggestionCacheWrapper<T> suggestionCacheWrapper = new SuggestionCacheWrapper<T>(addedTrie);
+        if(!suggestionCache.contains(suggestionCacheWrapper)){
+            suggestionCache.add(suggestionCacheWrapper);
         }
 
         Collections.sort(suggestionCache);
@@ -102,7 +124,7 @@ public class Trie<T> implements Comparable<Trie<T>> {
         return search(key, 0);
     }
 
-    public ArrayList<Trie<T>> getCachedSuggestions(){
+    public ArrayList<SuggestionCacheWrapper<T>> getCachedSuggestions(){
         return suggestionCache;
     }
 
@@ -176,6 +198,10 @@ public class Trie<T> implements Comparable<Trie<T>> {
 
     public double getRank(){
         return rank;
+    }
+
+    public double getSelfRank(){
+        return selfRank;
     }
 
     public int getNumberOfEntries(){

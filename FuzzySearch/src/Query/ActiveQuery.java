@@ -1,5 +1,6 @@
 package Query;
 
+import DataStructure.SuggestionCacheWrapper;
 import DataStructure.Trie;
 import DocumentModel.IDocument;
 
@@ -112,15 +113,15 @@ public class ActiveQuery {
     }
 
     public void getSuggestions(ArrayList<ISuggestionWrapper> suggestions) {
-        ArrayList<Trie<IDocument>> cachedSuggestions = queryPosition.getCachedSuggestions();
-        for (Trie<IDocument> suggestion : cachedSuggestions){
+        ArrayList<SuggestionCacheWrapper<IDocument>> cachedSuggestions = queryPosition.getCachedSuggestions();
+        for (SuggestionCacheWrapper<IDocument> suggestion : cachedSuggestions){
             double suggestionRank = suggestion.getRank() * EditOperation.getRankDiscount(previousEdits);
             boolean hasSuggestion = false;
             for(int i = 0; i < suggestions.size(); i++){
                 ISuggestionWrapper suggestionWrapper = suggestions.get(i);
-                if(suggestionWrapper.getSuggestion().equals(suggestion.getLabel())){
+                if(suggestionWrapper.getSuggestion().equals(suggestion.getSuggestion().getLabel())){
                     if(suggestionWrapper.getRank() < suggestionRank){
-                        suggestions.set(i, new SuggestionWrapper(suggestion.getLabel(), suggestionRank));
+                        suggestions.set(i, new SuggestionWrapper(suggestion.getSuggestion().getLabel(), suggestionRank));
                     }
                     hasSuggestion = true;
                     break;
@@ -128,7 +129,7 @@ public class ActiveQuery {
             }
 
             if(!hasSuggestion){
-                suggestions.add(new SuggestionWrapper(suggestion.getLabel(), suggestionRank));
+                suggestions.add(new SuggestionWrapper(suggestion.getSuggestion().getLabel(), suggestionRank));
             }
         }
     }

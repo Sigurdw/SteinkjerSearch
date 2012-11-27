@@ -1,5 +1,6 @@
 package Query.FastInteractiveSearch;
 
+import DataStructure.SuggestionCacheWrapper;
 import DataStructure.Trie;
 import DocumentModel.IDocument;
 import Query.*;
@@ -62,7 +63,6 @@ public class FastActiveNode {
     private void AddMatchToList(PriorityQueue<Link> linkQueue){
         if(EditOperation.isOperationAllowed(lastEditOperation, EditOperation.Match)){
             Trie<IDocument> match = getMatch();
-            //System.out.println(match);
             if(match != null){
                 double rank = getDiscountRank(match, EditOperation.getOperationDiscount(
                         EditOperation.Match,
@@ -180,28 +180,29 @@ public class FastActiveNode {
             double rankThreshold)
     {
         int numberOfUsedSuggestions = 0;
-        ArrayList<Trie<IDocument>> suggestions = queryPosition.getCachedSuggestions();
+        ArrayList<SuggestionCacheWrapper<IDocument>> suggestions = queryPosition.getCachedSuggestions();
         for (
                 int i = nextSuggestion;
                 i < Math.min(nextSuggestion + neededSuggestions, suggestions.size());
                 i++)
         {
-            Trie<IDocument> suggestionDocument = suggestions.get(i);
-            double suggestionRank = getDiscountRank(suggestionDocument, 1);
+            SuggestionCacheWrapper<IDocument> suggestionDocument = suggestions.get(i);
+
+            double suggestionRank = getDiscountRank(suggestionDocument);
             if(rankThreshold > suggestionRank){
                 break;
             }
 
             boolean hasSuggestion = false;
             for(ISuggestionWrapper suggestionWrapper : suggestionsWrappers){
-                if(suggestionWrapper.getSuggestion().equals(suggestionDocument.getLabel())){
+                if(suggestionWrapper.getSuggestion().equals(suggestionDocument.getSuggestion().getLabel())){
                     hasSuggestion = true;
                     break;
                 }
             }
 
             if(!hasSuggestion){
-                suggestionsWrappers.add(new SuggestionWrapper(suggestionDocument.getLabel(), suggestionRank));
+                suggestionsWrappers.add(new SuggestionWrapper(suggestionDocument.getSuggestion().getLabel(), suggestionRank));
                 numberOfUsedSuggestions++;
             }
             else{
@@ -219,6 +220,10 @@ public class FastActiveNode {
 
     private double getDiscountRank(Trie<IDocument> node, double modifier){
         return node.getRank() * modifier * editDiscount;
+    }
+
+    private double getDiscountRank(SuggestionCacheWrapper<IDocument> suggestion){
+        return suggestion.getRank() * editDiscount;
     }
 
     public void maybyAddNextLink(EditOperation editOperation, PriorityQueue<Link> linkQueue){
@@ -261,7 +266,7 @@ public class FastActiveNode {
 
     private double getNextSuggestionRank() {
         if(nextSuggestion < queryPosition.getCachedSuggestions().size()){
-            return getDiscountRank(queryPosition.getCachedSuggestions().get(nextSuggestion), 1);
+            return getDiscountRank(queryPosition.getCachedSuggestions().get(nextSuggestion));
         }
         else{
             return -2;

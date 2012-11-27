@@ -15,8 +15,8 @@ public class MainFrame extends JFrame {
     private static final int height = 600;
     private static final String directoryPath = "D:/TextCollection";
     private static final int numberOfSuggestionsRequired = 10;
-    private static final boolean usePrioritySearch = false;
-    private static final int allowedEditDistance = 2;
+    private static final boolean usePrioritySearch = true;
+    private static final int allowedEditDistance = 3;
 
     public MainFrame(){
         setSize(width, height);
