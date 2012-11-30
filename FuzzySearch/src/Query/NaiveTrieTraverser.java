@@ -7,6 +7,8 @@ public class NaiveTrieTraverser implements ITrieTraverser {
 
     private ArrayList<ActiveQuery> activeQueries = new ArrayList<ActiveQuery>();
     private final int numberOfSuggestions;
+    private int numberOfNodesInLastIteration = 0;
+    private int totalNumberOfNodes = 0;
 
     public NaiveTrieTraverser(ActiveQuery activeQuery, int numberOfSuggestions){
         this.numberOfSuggestions = numberOfSuggestions;
@@ -18,7 +20,7 @@ public class NaiveTrieTraverser implements ITrieTraverser {
         //System.out.println("Iteration on " + activeQueries.size() + " active nodes.");
         ArrayList<ActiveQuery> nextActiveQueries = new ArrayList<ActiveQuery>();
         for(ActiveQuery activeQuery : activeQueries){
-            activeQuery.addCharacter(nextActiveQueries);
+           numberOfNodesInLastIteration += activeQuery.addCharacter(nextActiveQueries);
         }
 
         ArrayList<ISuggestionWrapper> suggestions = new ArrayList<ISuggestionWrapper>();
@@ -29,8 +31,18 @@ public class NaiveTrieTraverser implements ITrieTraverser {
         Collections.sort(suggestions);
 
         activeQueries = nextActiveQueries;
-        System.out.println("Iteration completed: " + activeQueries.size());
-
+        //System.out.println("Iteration completed: " + activeQueries.size());
+        totalNumberOfNodes += numberOfNodesInLastIteration;
         return suggestions;
+    }
+
+    @Override
+    public int getNumberOfNodesInLastIteration() {
+        return numberOfNodesInLastIteration;
+    }
+
+    @Override
+    public int getTotalNodes() {
+        return totalNumberOfNodes;
     }
 }

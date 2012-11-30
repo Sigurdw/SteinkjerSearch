@@ -30,6 +30,15 @@ public class TermModifier {
         return modifiedIndexTerms;
     }
 
+    public static String scrambleTerm(String original){
+        String modifiedTerm = original;
+        for(int i = 0; i < original.length(); i++){
+            modifiedTerm = replaceWithRandomLetter(modifiedTerm, i);
+        }
+
+        return modifiedTerm;
+    }
+
     private static String deleteLetter(String original, int index){
         return original.substring(0, index) + original.substring(index + 1, original.length());
     }

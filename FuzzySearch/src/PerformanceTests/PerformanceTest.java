@@ -43,6 +43,69 @@ public class PerformanceTest {
 
             System.out.println(prioritySearchHandler.getSearchResults());
 
+            System.out.println("Naive node usage: " + naiveSearchHandler.getTotalNodes() + ", priority: " + prioritySearchHandler.getTotalNodes() + ", " + (100 * (double)prioritySearchHandler.getTotalNodes() / (double)naiveSearchHandler.getTotalNodes()) + "%" );
+            System.out.println("Naive time: " + naiveTime + " , Priority time " + priorityTime + ", Difference: " + (naiveTime - priorityTime) + " ,Percentage: " + (100 * ((double)priorityTime / (double)naiveTime)));
+
+            System.out.println();
+            totalNaiveTime += naiveTime;
+            totalPriorityTime += priorityTime;
+        }
+
+        System.out.println("Total percentage: " + (100 * ((double)totalPriorityTime / (double)totalNaiveTime)));
+    }
+
+    public void individualCharacterIterationTest(){
+        int numberOfEdits = 1;
+        ArrayList<String> terms = index.getRandomIndexTerms(1000);
+        ArrayList<String> modifiedTerms = TermModifier.introduceModifications(terms, numberOfEdits);
+        long totalNaiveTime = 0;
+        long totalPriorityTime = 0;
+        for(String modifiedTerm : modifiedTerms){
+            System.out.println("Doing naive search for " + modifiedTerm);
+            InteractiveSearchHandler naiveSearchHandler = new InteractiveSearchHandler(index, 10, false, numberOfEdits);
+            long naiveTime = doInteractiveSearch(naiveSearchHandler, modifiedTerm);
+            System.out.println(naiveSearchHandler.getSearchResults());
+
+            System.out.println();
+
+            System.out.println("Doing priority search for " + modifiedTerm);
+            InteractiveSearchHandler prioritySearchHandler = new InteractiveSearchHandler(index, 10, true, numberOfEdits);
+            long priorityTime = doInteractiveSearch(prioritySearchHandler, modifiedTerm);
+
+            System.out.println(prioritySearchHandler.getSearchResults());
+
+            System.out.println("Naive node usage: " + naiveSearchHandler.getTotalNodes() + ", priority: " + prioritySearchHandler.getTotalNodes() + ", " + (100 * (double)prioritySearchHandler.getTotalNodes() / (double)naiveSearchHandler.getTotalNodes()) + "%" );
+            System.out.println("Naive time: " + naiveTime + " , Priority time " + priorityTime + ", Difference: " + (naiveTime - priorityTime) + " ,Percentage: " + (100 * ((double)priorityTime / (double)naiveTime)));
+
+            System.out.println();
+            totalNaiveTime += naiveTime;
+            totalPriorityTime += priorityTime;
+        }
+
+        System.out.println("Total percentage: " + (100 * ((double)totalPriorityTime / (double)totalNaiveTime)));
+    }
+
+    public void randomCharacterTest(){
+        int numberOfEdits = 2;
+        ArrayList<String> terms = index.getRandomIndexTerms(10000);
+        long totalNaiveTime = 0;
+        long totalPriorityTime = 0;
+        for(String term : terms){
+            String modifiedTerm = TermModifier.scrambleTerm(term);
+            System.out.println("Doing naive search for " + modifiedTerm);
+            InteractiveSearchHandler naiveSearchHandler = new InteractiveSearchHandler(index, 10, false, numberOfEdits);
+            long naiveTime = doInteractiveSearch(naiveSearchHandler, modifiedTerm);
+            System.out.println(naiveSearchHandler.getSearchResults());
+
+            System.out.println();
+
+            System.out.println("Doing priority search for " + modifiedTerm);
+            InteractiveSearchHandler prioritySearchHandler = new InteractiveSearchHandler(index, 10, true, numberOfEdits);
+            long priorityTime = doInteractiveSearch(prioritySearchHandler, modifiedTerm);
+
+            System.out.println(prioritySearchHandler.getSearchResults());
+
+            System.out.println("Naive node usage: " + naiveSearchHandler.getTotalNodes() + ", priority: " + prioritySearchHandler.getTotalNodes() + ", " + (100 * (double)prioritySearchHandler.getTotalNodes() / (double)naiveSearchHandler.getTotalNodes()) + "%" );
             System.out.println("Naive time: " + naiveTime + " , Priority time " + priorityTime + ", Difference: " + (naiveTime - priorityTime) + " ,Percentage: " + (100 * ((double)priorityTime / (double)naiveTime)));
 
             System.out.println();
@@ -62,6 +125,7 @@ public class PerformanceTest {
             long endTime = System.nanoTime();
             System.out.println("Time usage for " + queryString + " was: " + (endTime - startTime));
             totalTime += endTime - startTime;
+            System.out.println("Node usage was: " + searchHandler.getNumberOfNodesInLastIteration());
         }
 
         return totalTime;

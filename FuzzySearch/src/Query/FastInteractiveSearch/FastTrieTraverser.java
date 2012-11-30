@@ -27,6 +27,9 @@ public class FastTrieTraverser implements ITrieTraverser {
         currentNodeVisitations = 1;
         while(neededSuggestions - suggestions.size() > 0 && nextLink != null){
             FastActiveNode currentNode = nextLink.UseLink(linkQueue);
+            if(currentNode.isNew()){
+                currentNodeVisitations++;
+            }
             if(currentNode.isExhausted()){
                 double thresholdRank = 0;
                 Link thresholdLink = linkQueue.peek();
@@ -56,7 +59,6 @@ public class FastTrieTraverser implements ITrieTraverser {
             }
 
             nextLink = getNextLink();
-            currentNodeVisitations++;
         }
 
         totalNodeVisitations += currentNodeVisitations;

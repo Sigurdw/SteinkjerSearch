@@ -19,8 +19,9 @@ public class FastActiveNode {
     private QueryString queryString;
     private double editDiscount;
     private boolean isSubstitution;
-
     private final int maxEdits;
+
+    private boolean isNew = true;
 
     private FastActiveNode(
             Trie<IDocument> queryPosition,
@@ -287,5 +288,14 @@ public class FastActiveNode {
 
     public boolean isExhausted() {
         return queryString.IsExhausted(queryStringIndex);
+    }
+
+    public boolean isNew(){
+        if(isNew){
+            isNew = false;
+            return true;
+        }
+
+        return false;
     }
 }

@@ -55,6 +55,16 @@ public class TriePriorityTraverser implements ILinkDiscarder, ITrieTraverser {
         return suggestions;
     }
 
+    @Override
+    public int getNumberOfNodesInLastIteration() {
+        return 0;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public int getTotalNodes() {
+        return 0;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
     private void MaybeUsePreviouslyDiscardedLinks() {
         ArrayList<IDiscardableLink> tempDiscardedList = new ArrayList<IDiscardableLink>();
         for(IDiscardableLink link : discardedLinks){

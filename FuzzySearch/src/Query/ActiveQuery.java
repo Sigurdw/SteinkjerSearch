@@ -38,9 +38,9 @@ public class ActiveQuery {
         substitution = isSubstitution;
     }
 
-    public void addCharacter(ArrayList<ActiveQuery> activeQueries){
+    public int addCharacter(ArrayList<ActiveQuery> activeQueries){
         Map<Character, Trie<IDocument>> candidateQueryPositions = queryPosition.getChildren();
-
+        int numberOfVisitedNodes = 0;
         for(Character candidatePath : candidateQueryPositions.keySet()){
             Trie<IDocument> newQueryPosition = candidateQueryPositions.get(candidatePath);
             if(candidatePath == queryString.GetCharacter(queryStringIndex)){
@@ -52,17 +52,25 @@ public class ActiveQuery {
                         queryStringIndex + 1,
                         false,
                         allowedEditDistance));
+
+                numberOfVisitedNodes++;
             }
             else{
-                processInsert(newQueryPosition, activeQueries);
+                numberOfVisitedNodes += processInsert(newQueryPosition, activeQueries);
             }
         }
 
-        processDeletes(activeQueries);
+        boolean didDelete = processDeletes(activeQueries);
+        if(didDelete){
+            numberOfVisitedNodes++;
+        }
+
+        return numberOfVisitedNodes;
     }
 
-    private void processInsert(Trie<IDocument> newQueryPosition, ArrayList<ActiveQuery> activeQueries)
+    private int processInsert(Trie<IDocument> newQueryPosition, ArrayList<ActiveQuery> activeQueries)
     {
+        int visitedNodes = 0;
         if(isAllowedToInsert()){
             ActiveQuery tempActiveQuery = new ActiveQuery(
                     newQueryPosition,
@@ -73,15 +81,18 @@ public class ActiveQuery {
                     false,
                     allowedEditDistance);
 
-             tempActiveQuery.addCharacter(activeQueries);
+            visitedNodes++;
+            visitedNodes += tempActiveQuery.addCharacter(activeQueries);
         }
+
+        return visitedNodes;
     }
 
     private boolean isAllowedToInsert() {
         return (lastEditOperation != EditOperation.Delete || substitution) && previousEdits < allowedEditDistance;
     }
 
-    private void processDeletes(ArrayList<ActiveQuery> activeQueries) {
+    private boolean processDeletes(ArrayList<ActiveQuery> activeQueries) {
         if(isAllowToDelete()){
             int editCost = EditOperation.getOperationCost(lastEditOperation, EditOperation.Delete);
             boolean isSubstitution  = false;
@@ -97,7 +108,11 @@ public class ActiveQuery {
                     queryStringIndex + 1,
                     isSubstitution,
                     allowedEditDistance));
+
+            return true;
         }
+
+        return false;
     }
 
     private boolean isAllowToDelete() {
