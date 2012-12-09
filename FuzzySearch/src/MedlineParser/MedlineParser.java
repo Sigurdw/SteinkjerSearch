@@ -6,22 +6,23 @@ import java.util.StringTokenizer;
 
 public class MedlineParser {
 
-    private static final String Path = "D:/Medline/medline2004.txt";
+    private static final String Path = "D:/medline2004.txt";
 
     private static final String Dochead = "#NEW RECORDPMID";
 
-    public static void main(String[] args){
+    private static final String DocPrefix = "Medline";
+
+    public static void main(String[] args) {
         try {
             File file = new File(Path);
             Scanner scanner = new Scanner(file);
             scanner.useDelimiter("#NEW RECORD\n");
-            int counter = 20000;
-            while (scanner.hasNext() && counter > 0){
+            int counter = 0;
+            while (scanner.hasNext()){
 
                 String document = scanner.next();
 
                 if(!document.equals("\n")){
-                    counter--;
                     StringTokenizer st = new StringTokenizer(document, "\n");
                     assert st.countTokens() == 5;
 
@@ -36,15 +37,21 @@ public class MedlineParser {
                     BufferedWriter bf = null;
 
                     try{
-                        File newFile = new File("D:/TextCollection/" + title + ".txt");
+                        String fileName = "C:/TextCollection/" + DocPrefix + counter + ".txt";
+                        File newFile = new File(fileName);
+                        System.out.println(fileName);
                         bf = new BufferedWriter(new FileWriter(newFile));
-                        bf.write(text);
-                        bf.flush();
+                        bf.write(title + "\n" + text);
                         bf.close();
+                        counter++;
                     }
                     catch(FileNotFoundException e){
-
+                        e.printStackTrace();
                     }
+                    catch (IOException e){
+                        e.printStackTrace();
+                    }
+
                     finally {
                         if(bf != null){
                             bf.close();

@@ -7,27 +7,32 @@ public class TermModifier {
     public static ArrayList<String> introduceModifications(ArrayList<String> indexTerms, int numberOfModifications){
         ArrayList<String> modifiedIndexTerms = new ArrayList<String>(indexTerms.size());
         for(String indexTerm : indexTerms){
-            String modifiedTerm = indexTerm;
-            for(int i = 0; i < numberOfModifications; i++){
-                int method = (int)(Math.random() * 3);
-                int index = (int)(Math.random() * modifiedTerm.length());
-                switch (method){
-                    case 0:
-                        modifiedTerm = deleteLetter(modifiedTerm, index);
-                        break;
-                    case 1:
-                        modifiedTerm = replaceWithRandomLetter(modifiedTerm, index);
-                        break;
-                    case 2:
-                        modifiedTerm = insertRandomLetter(modifiedTerm, index);
-                        break;
-                }
-            }
-
+            String modifiedTerm = modifyTerm(numberOfModifications, indexTerm);
             modifiedIndexTerms.add(modifiedTerm);
         }
 
         return modifiedIndexTerms;
+    }
+
+    public static String modifyTerm(int numberOfModifications, String indexTerm) {
+        String modifiedTerm = indexTerm;
+        for(int i = 0; i < numberOfModifications; i++){
+            int method = (int)(Math.random() * 3);
+            int index = (int)(Math.random() * modifiedTerm.length());
+            switch (method){
+                case 0:
+                    modifiedTerm = deleteLetter(modifiedTerm, index);
+                    break;
+                case 1:
+                    modifiedTerm = replaceWithRandomLetter(modifiedTerm, index);
+                    break;
+                case 2:
+                    modifiedTerm = insertRandomLetter(modifiedTerm, index);
+                    break;
+            }
+        }
+
+        return modifiedTerm;
     }
 
     public static String scrambleTerm(String original){

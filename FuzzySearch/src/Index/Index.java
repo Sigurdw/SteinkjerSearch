@@ -49,12 +49,16 @@ public class Index {
     public ArrayList<String> getRandomIndexTerms(int maxNumberOfTerms){
         int actualNumberOfTerms = Math.min(maxNumberOfTerms, indexTerms.size());
         ArrayList<String> randomTerms = new ArrayList<String>(actualNumberOfTerms);
-        Object[] indexTermArray = indexTerms.toArray();
         for(int i = 0; i < actualNumberOfTerms; i++){
-            int index = (int)(Math.random() * indexTermArray.length);
-            randomTerms.add((String)indexTermArray[index]);
+            randomTerms.add(getRandomIndexTerm());
         }
 
         return randomTerms;
+    }
+
+    public String getRandomIndexTerm(){
+        Object[] indexTermArray = indexTerms.toArray();
+        int index = (int)(Math.random() * indexTermArray.length);
+        return (String)indexTermArray[index];
     }
 }
