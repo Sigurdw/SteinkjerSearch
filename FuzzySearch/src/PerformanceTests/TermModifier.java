@@ -45,7 +45,11 @@ public class TermModifier {
     }
 
     private static String deleteLetter(String original, int index){
-        return original.substring(0, index) + original.substring(index + 1, original.length());
+        if(original.length() > 0)
+            return original.substring(0, index) + original.substring(index + 1, original.length());
+        else{
+            return original;
+        }
     }
 
     private static String replaceWithRandomLetter(String original, int index){

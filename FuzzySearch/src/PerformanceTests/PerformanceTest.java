@@ -17,7 +17,7 @@ import java.util.Map;
 
 public class PerformanceTest {
     private static final String directoryPath = "C:/TextCollection";
-    private static final int numberOfSuggestionsRequired = 10;
+    private static final int numberOfSuggestionsRequired = 20;
     private static final int allowedEditDistance = 2;
     private Index index;
     private Index priorityIndex;
@@ -25,10 +25,10 @@ public class PerformanceTest {
     private static final String resultPath = "D:/Results/";
     private static final String fileEnding  = ".csv";
 
-    public PerformanceTest(){
+    public PerformanceTest(int numberOfDicuments){
         Indexer naiveIndexer = new Indexer(numberOfSuggestionsRequired, true);
         try {
-            index = naiveIndexer.indexDocumentBlob(new File(directoryPath + "/medline2004.txt"), 100000);
+            index = naiveIndexer.indexDocumentBlob(new File(directoryPath + "/medline2004.txt"), numberOfDicuments);
         } catch (IOException e) {
             e.printStackTrace();
             System.exit(1);
@@ -43,6 +43,41 @@ public class PerformanceTest {
         doEditDistanceScaleTest(numberOfTerms, terms, "real");
     }
 
+    public ArrayList<String> getIndexTerms(int number){
+        return index.getRandomIndexTerms(number);
+    }
+
+    public void plainSearchTest(BufferedWriter simpleWriter, BufferedWriter priorityWriter) throws IOException{
+        int editDistance = 2;
+        ArrayList<String> terms = getIndexTerms(1000);
+
+        for(int j = 0; j < terms.size(); j++){
+            String term = terms.get(j);
+            String modifiedTerm = TermModifier.modifyTerm(editDistance, term);
+            searchHandler = new InteractiveSearchHandler(index, 10, false, editDistance);
+            long simpleTime = doInteractiveSearch(modifiedTerm);
+            searchHandler = new InteractiveSearchHandler(index, 10, true, editDistance);
+            long priorityTime = doInteractiveSearch(modifiedTerm);
+
+            String simpleRecord = "" + simpleTime;
+            String priorityRecord = "" + priorityTime;
+            if(j == terms.size() - 1){
+                simpleRecord += "\n";
+                priorityRecord += "\n";
+            }
+            else{
+                simpleRecord += "; ";
+                priorityRecord += "; ";
+            }
+
+            simpleWriter.write(simpleRecord);
+            priorityWriter.write(priorityRecord);
+        }
+
+        simpleWriter.flush();
+        priorityWriter.flush();
+    }
+
     public void randomCharacterTest(){
         int[] numberOfTerms = {10000, 10000, 1000, 50};
         ArrayList<String> terms = index.getRandomIndexTerms(10000);
@@ -53,37 +88,58 @@ public class PerformanceTest {
         doEditDistanceScaleTest(numberOfTerms, terms, "scramble");
     }
 
+    public void kScalingTest(){
+        int editDistance = 2;
+        ArrayList<String> terms = index.getRandomIndexTerms(1000);
+        try {
+            //File simpleAverageResultFile = new File(resultPath + "simpleKScaling1" + fileEnding);
+            File priorityAverageResultFile = new File(resultPath + "priorityKScaling2" + fileEnding);
+            //BufferedWriter simpleWriter = new BufferedWriter(new FileWriter(simpleAverageResultFile));
+            BufferedWriter priorityWriter = new BufferedWriter(new FileWriter(priorityAverageResultFile));
+            for(int k = 1; k <= numberOfSuggestionsRequired; k++){
+                System.out.println("kScaling: " + k);
+                for(int j = 0; j < terms.size(); j++){
+                    String term = terms.get(j);
+                    String modifiedTerm = TermModifier.modifyTerm(editDistance, term);
+                    //searchHandler = new InteractiveSearchHandler(index, k, false, editDistance);
+                    //long simpleTime = doInteractiveSearch(modifiedTerm);
+                    searchHandler = new InteractiveSearchHandler(index, k, true, editDistance);
+                    long priorityTime = doInteractiveSearch(modifiedTerm);
+
+                    //String simpleRecord = "" + simpleTime;
+                    String priorityRecord = "" + priorityTime;
+                    if(j == terms.size() - 1){
+                     //   simpleRecord += "\n";
+                        priorityRecord += "\n";
+                    }
+                    else{
+                    //    simpleRecord += "; ";
+                        priorityRecord += "; ";
+                    }
+
+                    //simpleWriter.write(simpleRecord);
+                    priorityWriter.write(priorityRecord);
+                }
+            }
+
+            //simpleWriter.close();
+            priorityWriter.close();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
+
+    }
+
     private void doEditDistanceScaleTest(int[] numberOfTerms, ArrayList<String> terms, String type) {
         try {
             File simpleAverageResultFile = new File(resultPath + "simpleEditDistanceTest" + type + System.currentTimeMillis() + fileEnding);
             File priorityAverageResultFile = new File(resultPath + "priorityEditDistanceTest" + type + System.currentTimeMillis() + fileEnding);
             BufferedWriter simpleWriter = new BufferedWriter(new FileWriter(simpleAverageResultFile));
             BufferedWriter priorityWriter = new BufferedWriter(new FileWriter(priorityAverageResultFile));
-            for(int i = 0; i < numberOfTerms.length; i++){
-                System.out.println("EditDistanceScaling: " + i);
-                for(int j = 0; j < numberOfTerms[i]; j++){
-                    String term = terms.get(j);
-                    String modifiedTerm = TermModifier.modifyTerm(i, term);
-                    searchHandler = new InteractiveSearchHandler(index, 10, false, i);
-                    long simpleTime = doInteractiveSearch(modifiedTerm);
-                    searchHandler = new InteractiveSearchHandler(index, 10, true, i);
-                    long priorityTime = doInteractiveSearch(modifiedTerm);
+            doEditDistanceScalingSearch(numberOfTerms, terms, simpleWriter, priorityWriter, 10);
 
-                    String simpleRecord = "" + simpleTime;
-                    String priorityRecord = "" + priorityTime;
-                    if(j == terms.size() - 1){
-                        simpleRecord += "\n";
-                        priorityRecord += "\n";
-                    }
-                    else{
-                        simpleRecord += ", ";
-                        priorityRecord += ", ";
-                    }
-
-                    simpleWriter.write(simpleRecord);
-                    priorityWriter.write(priorityRecord);
-                }
-            }
 
             simpleWriter.close();
             priorityWriter.close();
@@ -91,6 +147,34 @@ public class PerformanceTest {
         } catch (IOException e) {
             e.printStackTrace();
             System.exit(1);
+        }
+    }
+
+    private void doEditDistanceScalingSearch(int[] numberOfTerms, ArrayList<String> terms, BufferedWriter simpleWriter, BufferedWriter priorityWriter, int numberOfSuggestions) throws IOException {
+        for(int i = 0; i < numberOfTerms.length; i++){
+            System.out.println("EditDistanceScaling: " + i);
+            for(int j = 0; j < numberOfTerms[i]; j++){
+                String term = terms.get(j);
+                String modifiedTerm = TermModifier.modifyTerm(i, term);
+                searchHandler = new InteractiveSearchHandler(index, numberOfSuggestions, false, i);
+                long simpleTime = doInteractiveSearch(modifiedTerm);
+                searchHandler = new InteractiveSearchHandler(index, numberOfSuggestions, true, i);
+                long priorityTime = doInteractiveSearch(modifiedTerm);
+
+                String simpleRecord = "" + simpleTime;
+                String priorityRecord = "" + priorityTime;
+                if(j == numberOfTerms[i] - 1){
+                    simpleRecord += "\n";
+                    priorityRecord += "\n";
+                }
+                else{
+                    simpleRecord += ", ";
+                    priorityRecord += ", ";
+                }
+
+                simpleWriter.write(simpleRecord);
+                priorityWriter.write(priorityRecord);
+            }
         }
     }
 
@@ -172,9 +256,32 @@ public class PerformanceTest {
     }
 
     public static void main(String[] args){
-        PerformanceTest performanceTest = new PerformanceTest();
+        PerformanceTest performanceTest = new PerformanceTest(100000);
         //performanceTest.individualCharacterIterationTest();
-        performanceTest.editDistanceScalingTest();
-        performanceTest.randomCharacterTest();
+        performanceTest.kScalingTest();
+        //indexSizeScalingTest();
+    }
+
+    public static void indexSizeScalingTest(){
+        int stepSize = 10000;
+        int maxSize = 100000;
+
+        try {
+            File simpleAverageResultFile = new File(resultPath + "simpleIndexSize2" + fileEnding);
+            File priorityAverageResultFile = new File(resultPath + "priorityIndexSize2" + fileEnding);
+            BufferedWriter simpleWriter = new BufferedWriter(new FileWriter(simpleAverageResultFile));
+            BufferedWriter priorityWriter = new BufferedWriter(new FileWriter(priorityAverageResultFile));
+            for(int i = 10000; i <= maxSize; i += stepSize){
+                PerformanceTest performanceTest = new PerformanceTest(i);
+                performanceTest.plainSearchTest(simpleWriter, priorityWriter);
+            }
+
+            simpleWriter.close();
+            priorityWriter.close();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
     }
 }
